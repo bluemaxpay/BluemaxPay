@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="view_sale_order_payment_forms" model="ir.ui.view">
+            <field name="name">Payment</field>
+            <field name="model">zillopay.payment</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="payment_id" invisible="0" />
+                                <field name="is_zillo_card_sale" invisible="1" />
+                                <field name="is_zillo_card_sale_present" invisible="1" />
+                                <field name="is_card" attrs="{'invisible':[('is_zillo_card_sale','=',False)]}" />
+                                <field name="save_card" invisible="1" />
+                            </group>
+                            <group>
+                                <field name="amount" widget="monetary" />
+                            </group>
+                            <group attrs="{'invisible':[('is_zillo_card_sale_present','=',False)]}">
+                                <button class="btn btn-link" id="zillopay-card-present" t-on-click="_onClickZilloPayCardPresentInvoice">
+                                    <a>Send Payment Request</a>
+                                </button>
+                            </group>
+                        </group>
+                        <group string="Card Details" attrs="{'invisible': [('is_card', '!=', True)]}">
+                            <group>
+                                <field name="card_type" widget="radio" options="{'horizontal': true}" />
+                                <field name="card_name" />
+                                <field name="card_number" />
+                                <field name="card_cvv" />
+                            </group>
+                            <group>
+                                <field name="card_expiry_month" />
+                                <field name="card_expiry_year" />
+                                <field name="token_name" attrs="{'invisible': [('save_card', '!=', True)]}" />
+                            </group>
+                        </group>
+                        <footer>
+                            <button name="action_done" type="object" id="create-zillopay-payment" string="Create Payment" class="oe_highlight" attrs="{'invisible':[('is_card','=',False)]}" />
+                            <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z" />
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

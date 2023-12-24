@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="bluemaxpay_page_data_1" model="propay.page">
+        <field name="bluemaxpay_page">Account/AddUpdateCheckingAccount</field>
+    </record>
+    <record id="bluemaxpay_page_data_2" model="propay.page">
+        <field name="bluemaxpay_page">Account/ConfirmValidationDeposits</field>
+    </record>
+    <record id="bluemaxpay_page_data_3" model="propay.page">
+        <field name="bluemaxpay_page">Account/SendValidationDeposits</field>
+    </record>
+    <record id="bluemaxpay_page_data_4" model="propay.page">
+        <field name="bluemaxpay_page">Account/AddUpdateFlashFundAccount</field>
+    </record>
+    <record id="bluemaxpay_page_data_5" model="propay.page">
+        <field name="bluemaxpay_page">ManageFunds/TransferFundsToDebitCard</field>
+    </record>
+    <record id="bluemaxpay_page_data_6" model="propay.page">
+        <field name="bluemaxpay_page">ManageFunds/TransferFundsToBankAccount</field>
+    </record>
+    <record id="bluemaxpay_page_data_7" model="propay.page">
+        <field name="bluemaxpay_page">ManageFunds/AddFundsToPropayAccount</field>
+    </record>
+    <record id="bluemaxpay_page_data_8" model="propay.page">
+        <field name="bluemaxpay_page">ManageFunds/ScheduledTransfers</field>
+    </record>
+    <record id="bluemaxpay_page_data_9" model="propay.page">
+        <field name="bluemaxpay_page">Profile/EditBusinessInfo</field>
+    </record>
+    <record id="bluemaxpay_page_data_10" model="propay.page">
+        <field name="bluemaxpay_page">Profile/UpdateAddressAndPhone</field>
+    </record>
+    <record id="bluemaxpay_page_data_11" model="propay.page">
+        <field name="bluemaxpay_page">Profile/UpdateEmail</field>
+    </record>
+    <record id="bluemaxpay_page_data_12" model="propay.page">
+        <field name="bluemaxpay_page">Profile/UpdatePin</field>
+    </record>
+    <record id="bluemaxpay_page_data_13" model="propay.page">
+        <field name="bluemaxpay_page">PaymentMethod/editpaymentmethod</field>
+    </record>
+    <record id="bluemaxpay_page_data_14" model="propay.page">
+        <field name="bluemaxpay_page">Document/UploadDocument</field>
+    </record>
+    <record id="bluemaxpay_page_data_15" model="propay.page">
+        <field name="bluemaxpay_page">Risk/ListChargeBacks</field>
+    </record>
+    <record id="bluemaxpay_page_data_16" model="propay.page">
+        <field name="bluemaxpay_page">Report/AdvancedTransactionSearch</field>
+    </record>
+    <record id="bluemaxpay_page_data_17" model="propay.page">
+        <field name="bluemaxpay_page">Report/ConsolidatedFees</field>
+    </record>
+    <record id="bluemaxpay_page_data_18" model="propay.page">
+        <field name="bluemaxpay_page">Report/TransactionDetails</field>
+    </record>
+    <record id="bluemaxpay_page_data_19" model="propay.page">
+        <field name="bluemaxpay_page">Report/TransactionReport</field>
+    </record>
+    <record id="bluemaxpay_page_data_20" model="propay.page">
+        <field name="bluemaxpay_page">Report/SweepReport</field>
+    </record>
+</odoo>

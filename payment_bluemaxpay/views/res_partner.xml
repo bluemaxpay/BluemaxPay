@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="bluemax_view_partner_form_inherit" model="ir.ui.view">
+            <field name="name">bluemax.res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form" />
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="Saved Card" name="saved_card">
+                        <field name="bluemax_partner_ids">
+                            <tree>
+                                <field name="name" />
+                                <field name="token" />
+                                <field name="partner_id" />
+                                <field name="active" />
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+    </data>
+</odoo>

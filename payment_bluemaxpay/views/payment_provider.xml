@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="payment_provider_form_bluemaxpay" model="ir.ui.view">
+        <field name="name">BlueMax Pay Acquirer Form</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form" />
+        <field name="arch" type="xml">
+            <xpath expr='//group[@name="provider_credentials"]' position='inside'>
+                <group invisible="code != 'bluemaxpay'">
+                    <field name="public_api_key" required="code == 'bluemaxpay' or state != 'disabled'" password="True" />
+                    <field name="secret_api_key" required="code == 'bluemaxpay' or state != 'disabled'" password="True" />
+                    <field name="developer_id" required="code == 'bluemaxpay' or state != 'disabled'" password="True" />
+                    <field name="version_number" required="code == 'bluemaxpay' or state != 'disabled'" password="True" />
+                    <field name="payment_type" class="o_light_label" widget="radio" required="code == 'bluemaxpay' or state != 'disabled'" />
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='allow_tokenization']" position="attributes">
+                <attribute name="invisible">code == 'bluemaxpay'</attribute>
+            </xpath>
+            <xpath expr="//field[@name='capture_manually']" position="attributes">
+                <attribute name="invisible">code == 'bluemaxpay'</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

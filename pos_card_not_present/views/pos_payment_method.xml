@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pos_payment_method_view_form_inherit" model="ir.ui.view">
+        <field name="name">pos.payment.method.form.inherit</field>
+        <field name="model">pos.payment.method</field>
+        <field name="inherit_id" ref="point_of_sale.pos_payment_method_view_form" />
+        <field name="arch" type="xml">
+            <field name="journal_id" position="after">
+                <field name='enable_card_details' />
+            </field>
+            <xpath expr="//field[@name='use_payment_terminal']" position="after">
+                <field name="public_api_key" invisible="use_payment_terminal != 'card_not_present'" required="use_payment_terminal == 'card_not_present'" />
+                <field name="secret_api_key" invisible="use_payment_terminal != 'card_not_present'" required="use_payment_terminal == 'card_not_present'" />
+                <field name="developer_id" invisible="use_payment_terminal != 'card_not_present'" required="use_payment_terminal == 'card_not_present'" />
+                <field name="version_number" invisible="use_payment_terminal != 'card_not_present'" required="use_payment_terminal == 'card_not_present'" />
+                <field name="state" invisible="use_payment_terminal != 'card_not_present'" required="use_payment_terminal == 'card_not_present'" />
+            </xpath>
+        </field>
+    </record>
+    <record id="pos_payment_method_view_form_inherit2" model="ir.ui.view">
+        <field name="name">pos.payment.method.form.inherit2</field>
+        <field name="model">pos.payment.method</field>
+        <field name="inherit_id" ref="point_of_sale.pos_payment_method_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='use_payment_terminal']" position="after">
+                <field name="public_api_key" invisible="use_payment_terminal != 'savedcards'" required="use_payment_terminal == 'savedcards'" />
+                <field name="secret_api_key" invisible="use_payment_terminal != 'savedcards'" required="use_payment_terminal == 'savedcards'" />
+                <field name="developer_id" invisible="use_payment_terminal != 'savedcards'" required="use_payment_terminal == 'savedcards'" />
+                <field name="version_number" invisible="use_payment_terminal != 'savedcards'" required="use_payment_terminal == 'savedcards'" />
+                <field name="state" invisible="use_payment_terminal != 'savedcards'" required="use_payment_terminal == 'savedcards'" />
+            </xpath>
+        </field>
+    </record>
+</odoo>
