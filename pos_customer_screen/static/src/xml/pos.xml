@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="CustomerScreenButton" owl="1">
+        <span class="control-button customer_screen_btn">
+            <i class="fa fa-desktop"></i>
+            <span> </span>
+            <span>Open Screen</span>
+        </span>
+    </t>
+
+</templates>
