@@ -6,11 +6,10 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button string="Reset to Draft" name="reset_draft" type="object" invisible = "state != 'cancel'" class="btn-primary" data-hotkey="q" />
-                    <button string="Create Payment" name="create_transaction" type="object" invisible = "state != 'draft'" class="btn-primary" data-hotkey="q" />
-                    <button string="Void Payment" name="void_transaction" type="object" class="btn-primary" data-hotkey="q" invisible = "payment_type != 'authorize' or state not in ['post','authorize']"/>
-                    <button string="Refund Payment" name="refund_transaction" type="object" class="btn-primary" data-hotkey="q" invisible = "payment_type == 'authorize' or state not in ['post','authorize']" />
-                    <button string="Capture Payment" name="capture_payment" type="object" invisible = "state != 'authorize'" class="btn-primary" data-hotkey="q" />
+                    <button string="Reset to Draft" name="reset_draft" type="object" invisible = "state not in('cancel')" class="btn-primary" data-hotkey="q" />
+                    <button string="Create Payment" name="create_transaction" type="object" invisible = "state not in('draft')" class="btn-primary" data-hotkey="q" />
+                    <button string="Void Payment" name="void_transaction" type="object" invisible = "state not in('post','authorize')" class="btn-primary" data-hotkey="q" />
+                    <button string="Capture Payment" name="capture_payment" type="object" invisible = "state not in('authorize')" class="btn-primary" data-hotkey="q" />
                     <field name="state" widget="statusbar" readonly="1" />
                 </header>
                 <sheet>

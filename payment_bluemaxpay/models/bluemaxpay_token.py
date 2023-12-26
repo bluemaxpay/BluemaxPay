@@ -75,8 +75,6 @@ class BlueMaxPayToken(models.TransientModel):
         card.card_holder_name = self.name
         address = Address()
         address.address_type = 'Billing'
-        if not self.partner_id.city or not self.partner_id.state_id or not self.partner_id.country_id:
-            raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
         address.postal_code = self.partner_id.zip
         address.country = self.partner_id.country_id.name
         if not self.partner_id.state_id.name == "Armed Forces Americas":

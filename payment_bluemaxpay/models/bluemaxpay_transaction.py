@@ -46,7 +46,8 @@ class BlueMaxPayInvoice(models.Model):
     captured_amount = fields.Monetary(
         string='Captured Amount',
         required=False)
-    state = fields.Selection([('draft', 'Draft'), ('post', 'Posted'), ('authorize', 'Authorize'), ('cancel', 'Cancelled / Refunded')], default='draft')
+    state = fields.Selection([('draft', 'Draft'), ('post', 'Posted'),
+                              ('authorize', 'Authorize'), ('cancel', 'Cancel')], default='draft')
 
     # capture
     def action_view_payment_trans(self):
@@ -98,8 +99,6 @@ class BlueMaxPayInvoice(models.Model):
             address = Address()
             address.address_type = 'Billing'
             if self.sale_id.partner_shipping_id:
-                if not self.sale_id.partner_shipping_id.city or not self.sale_id.partner_shipping_id.state_id or not self.sale_id.partner_shipping_id.country_id:
-                    raise UserError("Delivery Address City, State, and Country fields are not set. These are required for payments.")
                 address.postal_code = self.sale_id.partner_shipping_id.zip
                 address.country = self.sale_id.partner_shipping_id.country_id.name
                 if not self.sale_id.partner_shipping_id.state_id.name == "Armed Forces Americas":
@@ -108,8 +107,6 @@ class BlueMaxPayInvoice(models.Model):
                 address.street_address_1 = self.sale_id.partner_shipping_id.street
                 address.street_address_1 = self.sale_id.partner_shipping_id.street2
             else:
-                if not self.partner_id.city or not self.partner_id.state_id or not self.partner_id.country_id:
-                    raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
                 address.postal_code = self.partner_id.zip
                 address.country = self.partner_id.country_id.name
                 if not self.partner_id.state_id.name == "Armed Forces Americas":
@@ -157,8 +154,6 @@ class BlueMaxPayInvoice(models.Model):
             address = Address()
             address.address_type = 'Billing'
             if self.sale_id.partner_shipping_id:
-                if not self.sale_id.partner_shipping_id.city or not self.sale_id.partner_shipping_id.state_id or not self.sale_id.partner_shipping_id.country_id:
-                    raise UserError("Delivery Address City, State, and Country fields are not set. These are required for payments.")
                 address.postal_code = self.sale_id.partner_shipping_id.zip
                 address.country = self.sale_id.partner_shipping_id.country_id.name
                 if not self.sale_id.partner_shipping_id.state_id.name == "Armed Forces Americas":
@@ -167,8 +162,6 @@ class BlueMaxPayInvoice(models.Model):
                 address.street_address_1 = self.sale_id.partner_shipping_id.street
                 address.street_address_1 = self.sale_id.partner_shipping_id.street2
             else:
-                if not self.partner_id.city or not self.partner_id.state_id or not self.partner_id.country_id:
-                    raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
                 address.postal_code = self.partner_id.zip
                 address.country = self.partner_id.country_id.name
                 if not self.partner_id.state_id.name == "Armed Forces Americas":
@@ -232,8 +225,6 @@ class BlueMaxPayInvoice(models.Model):
             address = Address()
             address.address_type = 'Billing'
             if self.sale_id.partner_shipping_id:
-                if not self.sale_id.partner_shipping_id.city or not self.sale_id.partner_shipping_id.state_id or not self.sale_id.partner_shipping_id.country_id:
-                    raise UserError("Delivery Address City, State, and Country fields are not set. These are required for payments.")
                 address.postal_code = self.sale_id.partner_shipping_id.zip
                 address.country = self.sale_id.partner_shipping_id.country_id.name
                 if not self.sale_id.partner_shipping_id.state_id.name == "Armed Forces Americas":
@@ -242,8 +233,6 @@ class BlueMaxPayInvoice(models.Model):
                 address.street_address_1 = self.sale_id.partner_shipping_id.street
                 address.street_address_1 = self.sale_id.partner_shipping_id.street2
             else:
-                if not self.partner_id.city or not self.partner_id.state_id or not self.partner_id.country_id:
-                    raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
                 address.postal_code = self.partner_id.zip
                 address.country = self.partner_id.country_id.name
                 if not self.partner_id.state_id.name == "Armed Forces Americas":
@@ -261,62 +250,6 @@ class BlueMaxPayInvoice(models.Model):
                 _logger.error(e)
                 raise UserError(e)
             if void_transaction.response_code == '00':
-                self.move_id.payment_state = 'not_paid'
-                self.transaction_id.state = 'draft'
-                self.transaction_id._set_pending()
-                self.transaction_id._set_canceled()
-                self.state = 'cancel'
-
-    def refund_transaction(self):
-        """Cancel transation"""
-        if not self.transaction:
-            _logger.error(
-                _("You can't capture this payment without the Transaction reference"))
-            raise UserError(
-                _("You can't capture this payment without the Transaction reference"))
-        if self.transaction:
-            bluemaxpay = self.env.ref(
-                'payment_bluemaxpay.payment_acquirer_bluemaxpay')
-            config = ServicesConfig()
-            config.secret_api_key = bluemaxpay.secret_api_key
-            config.developer_id = bluemaxpay.developer_id
-            config.version_number = bluemaxpay.version_number
-            config.service_url = bluemaxpay._get_bluemaxpay_urls()
-            ServicesContainer.configure(config)
-            ServicesContainer.configure(config)
-            address = Address()
-            address.address_type = 'Billing'
-            if self.sale_id.partner_shipping_id:
-                if not self.sale_id.partner_shipping_id.city or not self.sale_id.partner_shipping_id.state_id or not self.sale_id.partner_shipping_id.country_id:
-                    raise UserError("Delivery Address City, State, and Country fields are not set. These are required for payments.")
-                address.postal_code = self.sale_id.partner_shipping_id.zip
-                address.country = self.sale_id.partner_shipping_id.country_id.name
-                if not self.sale_id.partner_shipping_id.state_id.name == "Armed Forces Americas":
-                    address.state = self.sale_id.partner_shipping_id.state_id.name
-                address.city = self.sale_id.partner_shipping_id.city
-                address.street_address_1 = self.sale_id.partner_shipping_id.street
-                address.street_address_1 = self.sale_id.partner_shipping_id.street2
-            else:
-                if not self.partner_id.city or not self.partner_id.state_id or not self.partner_id.country_id:
-                    raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
-                address.postal_code = self.partner_id.zip
-                address.country = self.partner_id.country_id.name
-                if not self.partner_id.state_id.name == "Armed Forces Americas":
-                    address.state = self.partner_id.state_id.name
-                address.city = self.partner_id.city
-                address.street_address_1 = self.partner_id.street
-                address.street_address_1 = self.partner_id.street2
-            card = CreditCardData()
-            card.token = self.card_id.token
-            try:
-                refund_transaction = Transaction.from_id(self.transaction) \
-                    .refund(self.captured_amount) \
-                    .with_currency("USD") \
-                    .execute()
-            except ApiException as e:
-                _logger.error(e)
-                raise UserError(e)
-            if refund_transaction.response_code == '00':
                 self.move_id.payment_state = 'not_paid'
                 self.transaction_id.state = 'draft'
                 self.transaction_id._set_pending()

@@ -58,8 +58,6 @@ class AccountPayment(models.Model):
                             card.token = rec.card_id.token
                             address = Address()
                             address.address_type = 'Billing'
-                            if not rec.partner_id.city or not rec.partner_id.state_id or not rec.partner_id.country_id:
-                                raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
                             address.postal_code = rec.partner_id.zip
                             address.country = rec.partner_id.country_id.name
                             if not rec.partner_id.state_id.name == "Armed Forces Americas":

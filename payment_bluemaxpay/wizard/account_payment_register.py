@@ -133,8 +133,6 @@ class AccountPaymentRegister(models.TransientModel):
                     address = Address()
                     address.address_type = 'Billing'
                     if move.partner_shipping_id:
-                        if not move.partner_shipping_id.city or not move.partner_shipping_id.state_id or not move.partner_shipping_id.country_id:
-                            raise UserError("Delivery Address City, State, and Country fields are not set. These are required for payments.")
                         address.postal_code = move.partner_shipping_id.zip
                         address.country = move.partner_shipping_id.country_id.name
                         if not move.partner_shipping_id.state_id.name == "Armed Forces Americas":
@@ -143,8 +141,6 @@ class AccountPaymentRegister(models.TransientModel):
                         address.street_address_1 = move.partner_shipping_id.street
                         address.street_address_1 = move.partner_shipping_id.street2
                     else:
-                        if not self.partner_id.city or not self.partner_id.state_id or not self.partner_id.country_id:
-                            raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
                         address.postal_code = self.partner_id.zip
                         address.country = self.partner_id.country_id.name
                         if not self.partner_id.state_id.name == "Armed Forces Americas":
@@ -231,8 +227,6 @@ class AccountPaymentRegister(models.TransientModel):
                 address = Address()
                 address.address_type = 'Billing'
                 if move.partner_shipping_id:
-                    if not move.partner_shipping_id.city or not move.partner_shipping_id.state_id or not move.partner_shipping_id.country_id:
-                        raise UserError("Delivery Address City, State, and Country fields are not set. These are required for payments.")
                     address.postal_code = move.partner_shipping_id.zip
                     address.country = move.partner_shipping_id.country_id.name if move.partner_shipping_id.country_id else None
                     if not move.partner_shipping_id.state_id.name == "Armed Forces Americas":
@@ -241,8 +235,6 @@ class AccountPaymentRegister(models.TransientModel):
                     address.street_address_1 = move.partner_shipping_id.street
                     address.street_address_1 = move.partner_shipping_id.street2
                 else:
-                    if not move.partner_id.city or not move.partner_id.state_id or not move.partner_id.country_id:
-                        raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
                     address.postal_code = move.partner_id.zip
                     address.country = move.partner_id.country_id.name if move.partner_id.country_id else None
                     if not move.partner_id.state_id.name == "Armed Forces Americas":

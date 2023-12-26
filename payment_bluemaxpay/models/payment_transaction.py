@@ -81,8 +81,6 @@ class PaymentTransaction(models.Model):
         address = Address()
         address.address_type = 'Billing'
         if self.sale_order_ids and self.sale_order_ids.partner_shipping_id:
-            if not self.sale_order_ids.partner_shipping_id.city or not self.sale_order_ids.partner_shipping_id.state_id or not self.sale_order_ids.partner_shipping_id.country_id:
-                raise UserError("Sale Delivery Address City, State, and Country fields are not set. These are required for payments.")
             address.postal_code = self.sale_order_ids.partner_shipping_id.zip
             address.country = self.sale_order_ids.partner_shipping_id.country_id.name
             if not self.sale_order_ids.partner_shipping_id.state_id.name == "Armed Forces Americas":
@@ -91,8 +89,6 @@ class PaymentTransaction(models.Model):
             address.street_address_1 = self.sale_order_ids.partner_shipping_id.street
             address.street_address_1 = self.sale_order_ids.partner_shipping_id.street2
         elif self.invoice_ids and self.invoice_ids.partner_shipping_id:
-            if not self.invoice_ids.partner_shipping_id.city or not self.invoice_ids.partner_shipping_id.state_id or not self.invoice_ids.partner_shipping_id.country_id:
-                raise UserError("Invoice Delivery Address City, State, and Country fields are not set. These are required for payments.")
             address.postal_code = self.invoice_ids.partner_shipping_id.zip
             address.country = self.invoice_ids.partner_shipping_id.country_id.name
             if not self.invoice_ids.partner_shipping_id.state_id.name == "Armed Forces Americas":
@@ -101,8 +97,6 @@ class PaymentTransaction(models.Model):
             address.street_address_1 = self.invoice_ids.partner_shipping_id.street
             address.street_address_1 = self.invoice_ids.partner_shipping_id.street2
         else:
-            if not partner.city or not partner.state_id or not partner.country_id:
-                raise UserError("Customer Delivery Address City, State, and Country fields are not set. These are required for payments.")
             address.postal_code = partner.zip if partner else None
             address.country = partner.country_id.name if partner else None
             if not partner.state_id.name == "Armed Forces Americas":

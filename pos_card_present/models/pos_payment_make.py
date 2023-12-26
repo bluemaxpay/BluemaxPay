@@ -44,22 +44,16 @@ class PosMakePaymentInh(models.TransientModel):
                             address = Address()
                             address.address_type = 'Billing'
                             if self.sale_id.partner_shipping_id:
-                                if not self.sale_id.partner_shipping_id.city or not self.sale_id.partner_shipping_id.state_id or not self.sale_id.partner_shipping_id.country_id:
-                                    raise UserError("Delivery Address City, State, and Country fields are not set. These are required for payments.")
                                 address.postal_code = self.sale_id.partner_shipping_id.zip
                                 address.country = self.sale_id.partner_shipping_id.country_id.name
-                                if not self.sale_id.partner_shipping_id.state_id.name == "Armed Forces Americas":
-                                    address.state = self.sale_id.partner_shipping_id.state_id.name
+                                address.state = self.sale_id.partner_shipping_id.state_id.name
                                 address.city = self.sale_id.partner_shipping_id.city
                                 address.street_address_1 = self.sale_id.partner_shipping_id.street
                                 address.street_address_1 = self.sale_id.partner_shipping_id.street2
                             else:
-                                if not self.partner_id.city or not self.partner_id.state_id or not self.partner_id.country_id:
-                                    raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
                                 address.postal_code = self.partner_id.zip
                                 address.country = self.partner_id.country_id.name
-                                if not self.partner_id.state_id.name == "Armed Forces Americas":
-                                    address.state = self.partner_id.state_id.name
+                                address.state = self.partner_id.state_id.name
                                 address.city = self.partner_id.city
                                 address.street_address_1 = self.partner_id.street
                                 address.street_address_1 = self.partner_id.street2

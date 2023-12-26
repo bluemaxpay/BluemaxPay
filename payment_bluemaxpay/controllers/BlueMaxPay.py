@@ -186,7 +186,7 @@ class BlueMaxPayController(http.Controller):
                     'message': e
                 }
         bluemaxpay_trans = request.env['bluemaxpay.transaction'].sudo().create({
-            'name': sale.name if sale else trans_id.invoice_ids.name,
+            'name': sale.name if sale else (trans_id.invoice_ids.name if trans_id.invoice_ids and len(trans_id.invoice_ids) == 1 else payment_id.name),
             'amount': code.get('params').get('amount'),
             'partner_id': partner.id,
             'date': fields.Datetime.now(),

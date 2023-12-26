@@ -37,8 +37,6 @@ class SaleOrderCapture(models.Model):
             ServicesContainer.configure(config)
             address = Address()
             address.address_type = 'Billing'
-            if not self.transaction_id.partner_id.city or not self.transaction_id.partner_id.state_id or not self.transaction_id.partner_id.country_id:
-                raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
             address.postal_code = self.transaction_id.partner_id.zip
             address.country = self.transaction_id.partner_id.country_id.name
             if not self.transaction_id.partner_id.state_id.name == "Armed Forces Americas":

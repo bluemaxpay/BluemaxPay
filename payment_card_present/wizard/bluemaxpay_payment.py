@@ -66,8 +66,6 @@ class BlueMaxPayPayment(models.Model):
                     address = Address()
                     address.address_type = 'Billing'
                     if payment.partner_shipping_id:
-                        if not payment.partner_shipping_id.city or not payment.partner_shipping_id.state_id or not payment.partner_shipping_id.country_id:
-                            raise UserError("Delivery Address City, State, and Country fields are not set. These are required for payments.")
                         address.postal_code = payment.partner_shipping_id.zip
                         address.country = payment.partner_shipping_id.country_id.name
                         if not payment.partner_shipping_id.state_id.name == "Armed Forces Americas":
@@ -76,8 +74,6 @@ class BlueMaxPayPayment(models.Model):
                         address.street_address_1 = payment.partner_shipping_id.street
                         address.street_address_1 = payment.partner_shipping_id.street2
                     else:
-                        if not payment.partner_id.city or not payment.partner_id.state_id or not payment.partner_id.country_id:
-                            raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
                         address.postal_code = payment.partner_id.zip
                         address.country = payment.partner_id.country_id.name
                         if not payment.partner_id.state_id.name == "Armed Forces Americas":
@@ -191,8 +187,6 @@ class BlueMaxPayPayment(models.Model):
                 address = Address()
                 address.address_type = 'Billing'
                 if payment.partner_shipping_id:
-                    if not payment.partner_shipping_id.city or not payment.partner_shipping_id.state_id or not payment.partner_shipping_id.country_id:
-                        raise UserError("Delivery Address City, State, and Country fields are not set. These are required for payments.")
                     address.postal_code = payment.partner_shipping_id.zip
                     address.country = payment.partner_shipping_id.country_id.name if payment.partner_shipping_id.country_id else None
                     if not payment.partner_shipping_id.state_id.name == "Armed Forces Americas":
@@ -201,8 +195,6 @@ class BlueMaxPayPayment(models.Model):
                     address.street_address_1 = payment.partner_shipping_id.street
                     address.street_address_1 = payment.partner_shipping_id.street2
                 else:
-                    if not payment.partner_id.city or not payment.partner_id.state_id or not payment.partner_id.country_id:
-                        raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
                     address.postal_code = payment.partner_id.zip
                     address.country = payment.partner_id.country_id.name if payment.partner_id.country_id else None
                     if not payment.partner_id.state_id.name == "Armed Forces Americas":
