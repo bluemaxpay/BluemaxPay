@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="ZilloOrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('before-footer')]" position="before">
+            <div>
+                <t t-foreach="paymentlines" t-as="line" t-key="line.cid">
+                    <t t-if="isEnable">
+                        <div class="pos-receipt-center-align" style="font-size: 20px;"><strong>Credit Card Info</strong></div>
+                        <div>
+                            <span>Entry q122 :</span>
+                            <span t-esc=" line.payment_method_id" class="pos-receipt-right-align" />
+                            <br />
+                            <span>Trans ID : </span>
+                            <span t-esc="line.transaction_id" class="pos-receipt-right-align" />
+                            <br />
+                            <span>Card Type : </span>
+                            <span t-esc="line.card_type" class="pos-receipt-right-align" />
+                            <br />
+                            <span>Card : </span>
+                            <span t-esc="line.card_number" class="pos-receipt-right-align" />
+                            <br />
+                            <span>Response : </span>
+                            <span t-esc="line.zillo_response" class="pos-receipt-right-align" />
+                            <br />
+                            <span>Approved amount: </span>
+                            <span t-esc="line.approved_amount" class="pos-receipt-right-align" />
+                            <br />
+                            <span>Ref. Number: </span>
+                            <span t-esc="line.ref_number" class="pos-receipt-right-align" />
+                            <br />
+                            <span>Auth Code: </span>
+                            <span t-esc="line.auth_code" class="pos-receipt-right-align" />
+                            <br />
+                            <span>Device Id: </span>
+                            <span t-esc="line.device_id" class="pos-receipt-right-align" />
+                            <br />
+                            <span>HREF: </span>
+                            <span t-esc="line.href" class="pos-receipt-right-align" />
+                            <br />
+                            <span>Transaction # </span>
+                            <span t-esc="line.transaction" class="pos-receipt-right-align" />
+                            <br />
+                        </div>
+                    </t>
+                </t>
+                <br />
+            </div>
+        </xpath>
+    </t>
+</templates>

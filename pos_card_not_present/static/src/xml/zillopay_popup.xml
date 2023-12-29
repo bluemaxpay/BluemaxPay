@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="CardNotPresentZilloPayPayment" owl="1">
+        <div role="dialog" class="modal-dialog zillopay">
+            <div class="popup popup-zillopaypopup" style="background-color: #d0d9db">
+                <p class="title">
+                    <t t-esc="props.title" />
+                </p>
+                <span class="body">
+                    <center>
+                        <div id="card-holder-name">
+                            <label>Card Holder Name</label>
+                            <input type="text" id="card_name" t-model="props.name" t-ref="input" placeholder="Jane Smith" maxlength="20" min="1" max="20" /><br />
+                        </div>
+                        <div id="card-number">
+                            <label>Card Number</label>
+                            <input type="text" id="card_number" t-model="props.number" t-ref="input" placeholder="**** **** **** ****" maxlength="16" /><br />
+                        </div>
+                        <div id="card-month">
+                            <center><label>Exp Month</label></center>
+                            <input type="text" id="card_month" t-model="props.month" t-ref="input" placeholder="MM" maxlength="2" required="1" /><br />
+                        </div>
+                        <div id="card-year">
+                            <center><label>Exp Year</label></center>
+                            <input type="text" id="card_year" t-model="props.year" t-ref="input" placeholder="YYYY" maxlength="4" /><br />
+                        </div>
+                        <div id="card-cvv">
+                            <center><label>CVV</label></center>
+                            <input type="text" id="card_cvv" t-model="props.cvv" t-ref="input" placeholder="***" maxlength="4" />
+                        </div>
+                    </center>
+                </span>
+                <footer class="footer">
+                    <div class="button confirm disable" t-on-click="confirm">
+                        <t t-esc="props.confirmText" />
+                    </div>
+                    <div class="button cancel" t-on-click="cancel">
+                        <t t-esc="props.cancelText" />
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo noupdate="1">
+    <record id="payment_acquirer_bluemaxpay" model="payment.provider">
+        <field name="name">BlueMax Pay</field>
+        <field name="display_as">BlueMax Pay</field>
+        <field name="image_128" type="base64" file="payment_bluemaxpay/static/description/icon.png" />
+        <field name="code">bluemaxpay</field>
+        <field name="company_id" ref="base.main_company" />
+        <field name="module_id" ref="base.module_payment_bluemaxpay"/>
+        <field name="inline_form_view_id" ref="bluemaxpay_form" />
+        <field name="secret_api_key">*************</field>
+        <field name="public_api_key">dummy</field>
+        <field name="license_id">dummy</field>
+        <field name="device_id">dummy</field>
+        <field name="username">dummy</field>
+        <field name="password">dummy</field>
+        <field name="developer_id">dummy</field>
+        <field name="version_number">dummy</field>
+    </record>
+</odoo>

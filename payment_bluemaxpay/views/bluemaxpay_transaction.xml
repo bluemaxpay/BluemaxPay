@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_bluemaxpay_transaction_form" model="ir.ui.view">
+        <field name="name">BlueMax Pay</field>
+        <field name="model">bluemaxpay.transaction</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button string="Reset to Draft" name="reset_draft" type="object" states="cancel" class="btn-primary" data-hotkey="q" />
+                    <button string="Create Payment" name="create_transaction" type="object" states="draft" class="btn-primary" data-hotkey="q" />
+                    <button string="Void Payment" name="void_transaction" type="object" class="btn-primary" data-hotkey="q" attrs="{'invisible': ['|', ('payment_type', '!=', 'authorize'), ('state', 'not in', ['post','authorize'])]}"/>
+                    <button string="Refund Payment" name="refund_transaction" type="object" class="btn-primary" data-hotkey="q" attrs="{'invisible': ['|', ('payment_type', '=', 'authorize'), ('state', 'not in', ['post','authorize'])]}"/>
+                    <button string="Capture Payment" name="capture_payment" type="object" states="authorize" class="btn-primary" data-hotkey="q" />
+                    <field name="state" widget="statusbar" readonly="1" />
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_payment_trans" type="object" class="oe_stat_button" icon="fa-money" attrs="{'invisible': [('transaction_id', '=', False)]}">
+                            <field name="payment_count" widget="statinfo" string="Payment Transaction" />
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="card_id" />
+                            <field name="partner_id" />
+                            <field name="move_id" />
+                            <field name="payment_id" />
+                            <field name="reference" />
+                            <field name="payment_type" />
+                        </group>
+                        <group>
+                            <field name="date" />
+                            <field name="transaction" />
+                            <field name="transaction_id" />
+                            <field name="sale_id" invisible="0" />
+                            <field name="amount" />
+                            <!--capture-->
+                            <field name="un_capture_amount" />
+                            <field name="captured_amount" />
+                            <!--capture-->
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_bluemaxpay_transaction_tree" model="ir.ui.view">
+        <field name="name">BlueMax Pay</field>
+        <field name="model">bluemaxpay.transaction</field>
+        <field name="arch" type="xml">
+            <tree create="1">
+                <field name="name" />
+                <field name="amount" />
+                <field name="payment_type" invisible="1"/>
+                <field name="date" />
+                <field name="reference" />
+                <field name="transaction_id" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+</odoo>

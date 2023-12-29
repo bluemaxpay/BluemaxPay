@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="pos_screen_data" name="POS">
+        <t t-call="web.frontend_layout">
+            <t t-set="no_header" t-value='True'/>
+            <t t-set="no_footer" t-value='True'/>
+            <div id="pos_screen_data" style="height:100vh;" t-att-data-csession_id="csession_id" />
+        </t>
+    </template>
+</odoo>

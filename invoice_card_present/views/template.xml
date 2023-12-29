@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="bluemaxpay_pay_template_modal" name="Card Present Payment Process">
+            <div id="myModal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div class="display-td">
+                                <h3>Process Payment with Card Present</h3>
+                            </div>
+                            <h3 class="modal-title" />
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="/process/payment" class="">
+                                <input id="csrf_token" type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                <input id="order_id" type="hidden" name="order Id" t-att-value='order' />
+                                <input id='acq_id' type="hidden" name="Acquirer" t-att-value='acquirer_id' />
+                                <input id="order_type" type="hidden" name="order type" t-att-value='order_type' />
+                                <div class="panel panel-default credit-card-box">
+                                    <div class="panel-body">
+                                        <div class="col-sm-12" style="font-size:3em; text-align:center; background:#66ff99; width: 450px; height: 450px; display: flex;
+                    align-items: center; justify-content: center; border-radius: 50%; flex-direction: column;
+                    color: white; margin: auto;">
+                                            <div>
+                                                <p class="code success">Payment request sent to Stripe Terminal. Please wait....
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <div id="showGrower"></div>
+                            <button id="cancel_payment" type="button">Cancel Request</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </data>
+</odoo>

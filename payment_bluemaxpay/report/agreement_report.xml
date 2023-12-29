@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="report_action_agreement_bluemaxpay" model="ir.actions.report">
+        <field name="name">Propay Agreement</field>
+        <field name="model">bluemaxpay.agreement</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">payment_bluemaxpay.report_agreement_bluemaxpay</field>
+        <field name="report_file">payment_bluemaxpay.report_agreement_bluemaxpay</field>
+        <field name="print_report_name">'Agreement BlueMax Pay'</field>
+        <field name="binding_model_id" ref="model_bluemaxpay_agreement" />
+        <field name="binding_type">report</field>
+    </record>
+    <template id="report_agreement_bluemaxpay">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <center>
+                        <t t-raw="doc.heading" />
+                    </center>
+                    <t t-raw="doc.description" />
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_sale_order_capture_payment_form" model="ir.ui.view">
+            <field name="name">Payment</field>
+            <field name="model">sale.order.capture</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="transaction_id" />
+                                <field name="bluemaxpay_transaction_id" />
+                            </group>
+                            <group>
+                                <field name="amount" />
+                                <field name="currency_id" invisible="1" />
+                            </group>
+                        </group>
+                        <footer>
+                            <button string="Capture Payment" id="capture_amount" name="capture_amount" type="object" class="btn-primary" data-hotkey="q" />
+                            <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z" />
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="sale_order_capture" model="ir.actions.act_window">
+            <field name="name">Payment</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sale.order.capture</field>
+            <field name="view_mode">form</field>
+        </record>
+    </data>
+</odoo>

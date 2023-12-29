@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_bluemaxpay_token_form" model="ir.ui.view">
+        <field name="name">BlueMax Pay Credit Card Tokens</field>
+        <field name="model">bluemax.token</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button string="Generate Token" name="create_token" type="object" class="btn-primary" data-hotkey="q" />
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="token" password="True" />
+                        </group>
+                        <group>
+                            <field name="partner_id" />
+                            <field name="active" widget="boolean_toggle" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_bluemaxpay_token" model="ir.actions.act_window">
+        <field name="name">BlueMax Pay Credit Card Tokens</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bluemax.token</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="view_bluemaxpay_token_tree" model="ir.ui.view">
+        <field name="name">Token</field>
+        <field name="model">bluemax.token</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="partner_id" />
+            </tree>
+        </field>
+    </record>
+    <record id="action_bluemaz_token" model="ir.actions.act_window">
+        <field name="name">Token</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">bluemax.token</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="view_users_form" model="ir.ui.view">
+        <field name="name">res.users.form</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//sheet//div[@name='button_box']" position="inside">
+                <button name="action_view_bluemaxpay_trans" type="object" class="oe_stat_button" icon="fa-money">
+                    <field name="bluemaxpay_trans_count" widget="statinfo" string="BlueMax Pay Token(s)" />
+                </button>
+            </xpath>
+        </field>
+    </record>
+    <menuitem id="menu_bluemaxpay_token" name="BlueMax Pay Token" parent="account.root_payment_menu" action="action_bluemaxpay_token" sequence="20" />
+    <menuitem id="menu_bluemaxpay_token_website" name="BlueMax Pay Token" parent="website_sale.menu_ecommerce_settings" action="action_bluemaxpay_token" sequence="20" />
+</odoo>

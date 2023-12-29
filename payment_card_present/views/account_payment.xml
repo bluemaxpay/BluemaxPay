@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_payment_form" model="ir.ui.view">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_post']" position="after">
+                    <button name="action_payment" string="BlueMax Pay Payment" type="object" class="oe_highlight" attrs="{'invisible': ['|', ('card_present', '!=', True),('state', '=', 'posted')]}" data-hotkey="v" />
+                </xpath>
+                <xpath expr="//field[@name='payment_transaction_id']" position="after">
+                    <field name="card_present" invisible="1" />
+                    <field name="card_not_present" invisible="1" />
+                    <field name="response_message" invisible="1" />
+                    <!-- <field name="save_token" attrs="{'invisible': [('card_present', '!=', True)]}" /> -->
+                </xpath>
+                <xpath expr="//field[@name='payment_token_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('card_present', '=', True)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

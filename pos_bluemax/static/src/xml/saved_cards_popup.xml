@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="CardNotPresentBlueMaxPayPayment2" owl="1">
+        <div role="dialog" class="modal-dialog bluemaxpay">
+            <div class="popup popup-bluemaxpay" style="background-color: #d0d9db">
+                <p class="title">
+                    <t t-esc="props.title" />
+                </p>
+                <span class="body">
+                    <center>
+                        <label>Use Token</label>
+                        <br />
+                        <select t-model="state.token" t-on-change="_onChange" id="bluemaxpay-token" style="width: 400px;height: 40px;">
+                            <option value="" />
+                            <t t-foreach="props.token" t-as="token" t-key="token.id">
+                                <t t-if="env.pos.get_order().get_partner() and env.pos.get_order().get_partner().id == token.partner_id[0]">
+                                    <option t-att-value="token.id">
+                                        <t t-esc="token.name" />
+                                    </option>
+                                </t>
+                            </t>
+                        </select>
+                </span>
+                <footer class="footer">
+                    <div class="button confirm disable" t-on-click="confirm">
+                        <t t-esc="props.confirmText" />
+                    </div>
+                    <div class="button cancel" t-on-click="cancel">
+                        <t t-esc="props.cancelText" />
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </t>
+</templates>

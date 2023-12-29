@@ -1,0 +1,117 @@
+.no-action{
+    pointer-events: none;
+}
+.oe_signup_form {
+    max-width: 100%;
+    position: relative;
+    margin: 50px auto;
+}
+.oe_signup_form_propay{
+    max-width: 600px !important;
+    position: relative !important;
+    padding: 40px !important;
+    align-items: center !important;
+    margin-left: 34% !important;
+}
+.label_propay{
+    width:200px;
+}
+.col-md-12.pro-signup-main label {
+    width: 200px;
+}
+.pro-signup-main{
+    display: flex;
+    margin: 20px 0px;
+}
+.col-input {
+    width: 400px;
+}
+.col-label {
+    width: 150px;
+
+}
+.oe_signup_form_new {
+    max-width: 3000px !important;
+    position: relative !important;
+    margin-right: 80px !important;
+    margin-left: 100px !important;
+    padding: 40px !important;
+}
+.propay-login-page{
+    margin-top: 3%;
+    margin-left: 10%;
+    width: 50%;
+}
+.heading-propay{
+    font-size: 2.001rem;
+}
+.propay-login-page-main {
+    background-color: #72afb9;
+    margin-top: 20px;
+    padding: 5%;
+    padding-bottom: 2%;
+}
+.propay-login-page-sub {
+    background-color: #d9eeef;
+    margin-bottom: 10%;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 4%;
+    padding-bottom: 10px;
+    font-size: 18px;
+}
+.business {
+    width: 471px !important;
+    margin-left: 13px;
+}
+.propay-1 {
+    width: 450px;
+}
+.propay-2 {
+    width: 550px;
+}
+.column {
+  float: left;
+}
+.row{
+    column-gap: 15px
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.btn-auth-submit{
+    width: 20%;
+    align-items: center;
+
+}
+.propay-sign-up-button {
+    justify-content: center;
+    display: flex;
+}
+.field-agreement{
+    height:200px;
+    width:680px;
+    overflow:auto;
+}
+.logo {
+    display: flow-root;
+}
+.propay_signup_main{
+    display: flex;
+    justify-content: center;
+}
+
+.logo-main{
+    display: flex;
+    justify-content: center;
+}
+.row.propay_signup_main {
+    width: 100%;
+}
+select.account-type {
+    width: 100%;
+    height: 30px;
+}
