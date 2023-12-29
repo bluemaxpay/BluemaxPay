@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="SavedCards" owl="1">
+        <div class="popup popup-bluemaxpay" style="background-color: #d0d9db;padding:30px;font-size:17px;border-radius:30px;">
+            <p class="title" style="font-size:20px;font-weight: bolder;font-family: system-ui;font-variant: all-small-caps;color: black;text-transform: uppercase;margin: 0px;">
+                <t t-esc="props.title" />
+            </p>
+            <span class="modal-body">
+                <center>
+                    <label>Use Token</label>
+                    <br />
+                    <select t-model="state.token" t-on-change="_onChange" id="bluemaxpay-token" style="width: 400px;height: 30px;border-radius: 30px;background-color:white;width:80%;">
+                        <option value="" />
+                        <t t-foreach="props.token" t-as="token" t-key="token.id">
+                            <t t-if="this.props.order.get_partner() and this.props.order.get_partner().id == token.partner_id[0]">
+                                <option t-att-value="token.id">
+                                    <t t-esc="token.name" />
+                                </option>
+                            </t>
+                        </t>
+                    </select>
+                </center>
+            </span>
+            <footer class="footer">
+                <div class="button confirm disable" t-on-click="confirm" style="display: inline-block; padding: 6px 12px; opacity: 1.5;cursor: pointer;font-weight: bolder;font-family: system-ui;font-variant: all-small-caps;color: black;text-transform: uppercase;font-size:20px;margin-right:20px;">
+                    <t t-esc="props.confirmText" />
+                </div>
+                <div class="button cancel" t-on-click="cancel" style="display: inline-block; padding: 6px 12px; cursor: pointer;font-weight: bolder;font-family: system-ui;font-variant: all-small-caps;color: black;text-transform: uppercase;margin: 5px; transition: background-color 0.3s ease;font-size:20px;margin-left:20px;">
+                    <t t-esc="props.cancelText" />
+                </div>
+            </footer>
+        </div>
+    </t>
+</templates>

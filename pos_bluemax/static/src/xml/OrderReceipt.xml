@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('paymentlines')]" position="inside">
+            <t t-if="line.bluemax_data">
+                <br />
+                <div class="pos-receipt-center-align" style="font-size: 125%;">
+                    <span>CREDIT CARD INFO</span>
+                </div>
+                <br />
+                <div>
+                    <span class="pos-receipt-left-align">Entry: </span>
+                    <span class="pos-receipt-right-align">
+                        <t t-esc="line.entrymode" />
+                    </span>
+                </div>
+                <div>
+                    <span class="pos-receipt-left-align">Trans ID: </span>
+                    <span class="pos-receipt-right-align">
+                        <t t-esc="line.transaction_id" />
+                    </span>
+                </div>
+                <div>
+                    <span class="pos-receipt-left-align">Card Type: </span>
+                    <span class="pos-receipt-right-align">
+                        <t t-esc="line.card_type" />
+                    </span>
+                </div>
+                <div>
+                    <span class="pos-receipt-left-align">Card Number: </span>
+                    <span class="pos-receipt-right-align">
+                        <t t-esc="line.card_number" />
+                    </span>
+                </div>
+                <div>
+                    <span class="pos-receipt-left-align">Response: </span>
+                    <span class="pos-receipt-right-align">
+                        <t t-esc="line.bluemaxpay_response" />
+                    </span>
+                </div>
+                <div>
+                    <span class="pos-receipt-left-align">Approved Amount: </span>
+                    <span class="pos-receipt-right-align">
+                        <t t-esc="line.approved_amount" />
+                    </span>
+                </div>
+                <div>
+                    <span class="pos-receipt-left-align">Ref. Number: </span>
+                    <span class="pos-receipt-right-align">
+                        <t t-esc="line.ref_number" />
+                    </span>
+                </div>
+                <div>
+                    <span class="pos-receipt-left-align">Auth Code: </span>
+                    <span class="pos-receipt-right-align">
+                        <t t-esc="line.auth_code" />
+                    </span>
+                </div>
+            </t>
+        </xpath>
+    </t>
+</templates>

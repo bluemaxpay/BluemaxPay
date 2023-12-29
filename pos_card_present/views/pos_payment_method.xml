@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="pos_payment_method_view_form_inherit" model="ir.ui.view">
+        <field name="name">pos.payment.method.form.inherit</field>
+        <field name="model">pos.payment.method</field>
+        <field name="inherit_id" ref="point_of_sale.pos_payment_method_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='use_payment_terminal']" position="after">
+                <field name="port" invisible="use_payment_terminal != 'card_present'" required="use_payment_terminal == 'card_present'" />
+                <field name="ip_address" invisible="use_payment_terminal != 'card_present'" required="use_payment_terminal == 'card_present'" />
+                <field name="time_out" invisible="use_payment_terminal != 'card_present'" required="use_payment_terminal == 'card_present'" />
+                <field name="version_num" invisible="use_payment_terminal != 'card_present'" required="use_payment_terminal == 'card_present'" />
+            </xpath>
+        </field>
+    </record>
+</odoo>
