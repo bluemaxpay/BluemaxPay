@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="donation_snippet" name="Donation Button">
+        <div class="s_donation knk_donation"
+                data-name="Donation Button"
+                data-custom-amount="freeAmount"
+                t-att-data-display-options="display_options"
+                data-prefilled-options="true"
+                data-descriptions="true">
+            <form class="s_donation_form" action="/website/donation/pay" method="post" enctype="multipart/form-data">
+                <a href="#" type="button" class="knk_donation_donate_btn btn btn-primary btn-lg mb-2">Donate</a>
+            </form>
+        </div>
+    </template>
+    <template id="snippet_menu" inherit_id="website.snippets">
+        <xpath expr="//div[@id='snippet_structure']" position="before">
+            <div id="donation_snippet_structure" class="o_panel">
+                <div class="o_panel_header">
+                    <i class="fa fa-th-large"/> Donation
+                </div>
+                <div class="o_panel_body">
+                    <t t-snippet="bluemax_donations.donation_snippet" t-thumbnail="/bluemax_donations/static/src/img/donation_thumbanil.png"/>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="payment_bluemaxpay.client_action.DatePickerPopup">
+        <div>
+            <label for="start-date">Start Date :</label>
+            <input type="date" class="start-date" style="border-radius: 10px;text-align: center;font-weight: bold;background: #f0dcff;margin-left: 10px;border: 2px solid black"/>
+            <br />
+            <br />
+            <label for="end-date">End Date :</label>
+            <input type="date" class="end-date" style="border-radius: 10px;text-align: center;font-weight: bold;background: #f0dcff;margin-left: 10px;border: 2px solid black"/>
+        </div>
+    </t>
+    <t t-name="payment_bluemaxpay.client_action.ControlButtons">
+        <div class="d-flex">
+            <div class="o_report_buttons justify-content-right">
+                <button type="button" class="btn btn-primary o_group_by_month" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;font:normal normal normal 14px/1 FontAwesome;height:100%;border-radius:3px;margin-right:8px;border:1px solid black;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'">Group by Month</button>
+                <button type="button" class="btn btn-primary o_group_by_week" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;font:normal normal normal 14px/1 FontAwesome;height:100%;border-radius:3px;margin-right:8px;border:1px solid black;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'">Group by Week</button>
+                <button type="button" class="btn btn-primary o_group_by_day" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;font:normal normal normal 14px/1 FontAwesome;height:100%;border-radius:3px;margin-right:8px;border:1px solid black;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'">Group by Day</button>
+                <button type="button" class="btn btn-primary o_group_by_year" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;font:normal normal normal 14px/1 FontAwesome;height:100%;border-radius:3px;margin-right:8px;border:1px solid black;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'">Group by Year</button>
+            </div>
+            <div class="o_report_buttons justify-content-right" style="margin-left: 0.3rem;justify-content:right;" t-on-click="on_click_report">
+                <button type="button" class="btn btn-primary o_download_report fa fa-upload" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;border-radius:3px;margin-right:8px;border:1px solid black;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'"> Export Report</button>
+            </div>
+        </div>
+    </t>
+    <t t-name="payment_bluemaxpay.client_action.ControlButtonsPivot">
+        <div class="o_report_buttons" style="margin-left: 1rem">
+            <button type="button" class="btn btn-primary o_deploy_all fa fa-arrows" title="Deploy All" />
+        </div>
+        <div class="o_report_buttons" style="margin-left: 2rem">
+            <button type="button" class="btn btn-primary o_download_report fa fa-download" title="Download Report" />
+        </div>
+    </t>
+    <t t-name="global_report">
+        <div class="o_report">
+            <t t-set="bmPeriods" t-value="widget.bmPeriods" />
+            <t t-set="bluemaxpay_transactions" t-value="widget.bluemaxpay_transactions" />
+            <div class="text-nowrap mr0 ml0">
+                <table class="table bm_table">
+                    <t t-call="bm_report_detailed" />
+                </table>
+            </div>
+        </div>
+    </t>
+    <t t-name="bm_report_nocontent_helper">
+        <div class="o_view_nocontent">
+            <div class="o_nocontent_help">
+                <p class="o_view_nocontent_smiling_face">
+                    No product yet. Create Your previsions to start scheduling.
+                </p>
+            </div>
+        </div>
+    </t>
+    <t t-name="bm_report_detailed">
+        <thead class="thead-light bm_report_header" style="background: linear-gradient(45deg, #f0dcff, #ffddfa);border:1px solid black;">
+            <tr>
+                <th>
+                    <span>
+                    </span>
+                </th>
+                <th t-attf-value="Name">
+                    <span>Name
+                    </span>
+                </th>
+                <th t-attf-value="Customer">
+                    <span>Customer
+                    </span>
+                </th>
+                <th t-attf-value="Authorised Amount">
+                    <span>Authorised Amount
+                    </span>
+                </th>
+                <th t-attf-value="Date">
+                    <span>Date
+                    </span>
+                </th>
+                <th t-attf-value="Reference">
+                    <span>Reference
+                    </span>
+                </th>
+                <th t-attf-value="Transaction">
+                    <span>Transaction
+                    </span>
+                </th>
+                <th t-attf-value="State">
+                    <span>State
+                    </span>
+                </th>
+                <th t-attf-value="Payment Method">
+                    <span>Payment Method
+                    </span>
+                </th>
+            </tr>
+        </thead>
+        <t t-foreach="bluemaxpay_transactions" t-as="record">
+            <tbody class="o_mps_content bm_report_content" style="border: 0px;">
+                <tr class="bg-light">
+                    <th scope="col" style="background-color: white">
+                        <a href="#" class="o_report_record_url" t-att-data-res-id="record.data_id" t-att-data-model="record.data_model">
+                            <span><i class="fa fa-arrow-right"></i></span>
+                        </a>
+                    </th>
+                    <th scope="col" style="background-color: white" t-att-value="record.name">
+                        <a href="#" class="o_report_record_url" t-att-data-res-id="record.name_id" t-att-data-model="record.name_model">
+                            <t t-esc="record.name" />
+                        </a>
+                    </th>
+                    <th scope="col" style="background-color: white" t-att-value="record.partner_id">
+                        <a href="#" class="o_report_record_url" t-att-data-res-id="record.customer_id" t-att-data-model="'res.partner'">
+                            <t t-esc="record.partner_id" />
+                        </a>
+                    </th>
+                    <th scope="col" style="background-color: white" t-att-value="record.amount">
+                        <t t-esc="record.amount" />
+                    </th>
+                    <th scope="col" style="background-color: white" t-att-value="record.date">
+                        <t t-esc="record.date" />
+                    </th>
+                    <th scope="col" style="background-color: white" t-att-value="record.reference">
+                        <t t-esc="record.reference" />
+                    </th>
+                    <th scope="col" style="background-color: white" t-att-value="record.transaction_id">
+                        <a href="#" class="o_report_record_url" t-att-data-res-id="record.id_transaction" t-att-data-model="transaction_model">
+                            <t t-esc="record.transaction_id" />
+                        </a>
+                    </th>
+                    <th scope="col" style="background-color: white" t-att-value="record.state">
+                        <t t-esc="record.state" />
+                    </th>
+                    <th scope="col" style="background-color: white" t-att-value="record.transaction_type">
+                        <t t-esc="record.transaction_type" />
+                    </th>
+                </tr>
+            </tbody>
+        </t>
+    </t>
+</templates>

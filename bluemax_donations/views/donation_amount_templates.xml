@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Insert the donation form inside the payment form's <form/> element. -->
+    <template id="payment_form_inherit" inherit_id="payment.form">
+        <xpath expr="//div[@id='o_payment_form_options']" position="before">
+            <t t-if="is_website_donation" t-call="bluemax_donations.website_donation_information"/>
+        </xpath>
+    </template>
+
+    <!-- Display of /website/donation/pay -->
+    <template id="website_donation_pay" name="Donation payment">
+        <t t-call="portal.frontend_layout">
+            <t t-set="page_title" t-value="'Donation'"/>
+            <t t-set="additional_title"><t t-out="page_title"/></t>
+            <div class="wrap">
+                <div class="oe_structure" id="oe_structure_website_payment_donation_1"/>
+                <div class="container mb-3">
+                    <!-- Portal breadcrumb -->
+                    <t t-call="payment.portal_breadcrumb"/>
+                    <!-- Payment page -->
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div t-if="not amount" class="alert alert-info">
+                                There is nothing to pay.
+                            </div>
+                            <div t-elif="not currency" class="alert alert-warning">
+                                <strong>Warning</strong> The currency is missing or incorrect.
+                            </div>
+                            <div t-elif="not payment_methods_sudo and not tokens_sudo"
+                                 class="alert alert-warning"
+                            >
+                                <strong>No suitable payment option could be found.</strong><br/>
+                                If you believe that it is an error, please contact the website administrator.
+                            </div>
+                            <t t-else="" t-call="payment.form"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="oe_structure" id="oe_structure_website_payment_donation_2"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="website_donation_information" name="Donation Information">
+        <div class="row">
+            <div t-attf-class="mb-3 #{error.get('name') and 'o_has_error' or ''} col-lg-12 div_name #{not request.env.user._is_public() and 'd-none' or ''}">
+                <label class="col-form-label fw-bold" for="name">Name
+                    <span class="s_website_form_mark"> *</span>
+                </label>
+                <input t-att-readonly="'1' if 'name' in partner_details and partner_id else None" type="text" name="name" t-attf-class="form-control #{error.get('name') and 'is-invalid' or ''}" t-att-value="partner_details.get('name')" />
+            </div>
+            <div class="w-100"></div>
+            <h5 class="text-center">
+                <b>
+                    Donation Amount
+                </b>
+            </h5>
+            <div class="w-100"></div>
+            <div class="mb-3 col-lg-12 knk_donation_payment_form">
+                <div class="col-lg-12 card p-3">
+                    <!-- <label class="col-form-label fw-bold">Amount (<t t-out="currency.symbol"/>)</label> -->
+                    <div class="custom-radio-container d-flex flex-wrap">
+                        <t t-foreach="donation_amounts" t-as="donation_amount">
+                            <div t-attf-class="form-check my-2 custom-radio #{'active' if donation_amount_index == 0 else ''}">
+                                <input type="radio" name="knk_donation_amount"
+                                       class="form-check-input"
+                                       t-att-value="donation_amount"
+                                />
+                                <label class="knk_donation_btn form-check-label mt-0 btn btn-outline-primary" t-attf-for="amount_#{donation_amount_index}">
+                                    <t t-out="donation_amount"/>
+                                </label>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="form-check my-2 custom-radio">
+                        <input class="form-check-input" type="radio" id="other_amount" name="amount" />
+                        <label class="form-check-label mt-0 d-block" for="other_amount"></label>
+                        <t t-call="bluemax_donations.donation_input"/>
+                    </div>
+                </div>
+            </div>
+            <!-- <input type="hidden" name="donation_recipient_email" t-att-value="donation_options.get('donationEmail')"/> -->
+            <div class="w-100"></div>
+        </div>
+        <h3 class="o_page_header mt16 mb4">Payment Details</h3>
+    </template>
+
+
+    <template id="bluemax_donations.donation_input" name="Donation input">
+        <input name="knk_donation_amount"
+               type="number"
+               class="form-control o_amount_input"
+               t-att-min="donation_options.get('minimumAmount')"
+               t-att-max="donation_options.get('maximumAmount')"
+               placeholder="Custom Amount"
+        />
+    </template>
+
+</odoo>

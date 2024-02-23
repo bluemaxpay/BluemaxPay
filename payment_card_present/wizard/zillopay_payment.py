@@ -70,14 +70,14 @@ class ZillopayPayment(models.Model):
                         address.state = payment.partner_shipping_id.state_id.name
                         address.city = payment.partner_shipping_id.city
                         address.street_address_1 = payment.partner_shipping_id.street
-                        address.street_address_1 = payment.partner_shipping_id.street2
+                        address.street_address_2 = payment.partner_shipping_id.street2
                     else:
                         address.postal_code = self.partner_id.zip
                         address.country = self.partner_id.country_id.name
                         address.state = self.partner_id.state_id.name
                         address.city = self.partner_id.city
                         address.street_address_1 = self.partner_id.street
-                        address.street_address_1 = self.partner_id.street2
+                        address.street_address_2 = self.partner_id.street2
                     card = CreditCardData()
                     card.token = self.card_id.token
                     track = CreditTrackData()
@@ -88,6 +88,10 @@ class ZillopayPayment(models.Model):
                             .with_currency(self.currency_id.name) \
                             .with_address(address) \
                             .execute()
+                        if response.response_code != '00':
+                            raise UserError(
+                                "{} : Please Check your Credentials and Cards details.".format(response.response_message))
+
                     except ApiException as e:
                         _logger.error(e)
                         raise UserError(e)
@@ -162,14 +166,14 @@ class ZillopayPayment(models.Model):
                     address.state = payment.partner_shipping_id.state_id.name if payment.partner_shipping_id.state_id else None
                     address.city = payment.partner_shipping_id.city
                     address.street_address_1 = payment.partner_shipping_id.street
-                    address.street_address_1 = payment.partner_shipping_id.street2
+                    address.street_address_2 = payment.partner_shipping_id.street2
                 else:
                     address.postal_code = payment.partner_id.zip
                     address.country = payment.partner_id.country_id.name if payment.partner_id.country_id else None
                     address.state = payment.partner_id.state_id.name if payment.partner_id.state_id else None
                     address.city = payment.partner_id.city
                     address.street_address_1 = payment.partner_id.street
-                    address.street_address_1 = payment.partner_id.street2
+                    address.street_address_2 = payment.partner_id.street2
                 card = CreditCardData()
                 card.number = self.card_number
                 card.exp_month = self.card_expiry_month
@@ -182,6 +186,10 @@ class ZillopayPayment(models.Model):
                             .with_address(address) \
                             .with_request_multi_use_token(True) \
                             .execute()
+                        if save_card.response_code != '00':
+                            raise UserError(
+                                "{} : Please Check your Credentials and Cards details.".format(response.response_message))
+
                         card_save = self.env['zillo.token'].create({
                             'name': self.token_name,
                             'partner_id': payment.partner_id.id,

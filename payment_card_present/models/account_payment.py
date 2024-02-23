@@ -31,6 +31,7 @@ class AccountPayment(models.Model):
                       (ResponseCode, ResponseId))
         self.response_message = ResponseCode
         self.transaction_id = ResponseId
+
         return self
 
     def action_post(self):
@@ -87,7 +88,7 @@ class AccountPayment(models.Model):
             'context': {
                 'default_payment_id': self.id,
                 'default_amount': self.amount,
-                'card_id': self.save_token,
+                'card_id' : self.save_token,
                 'default_is_bluemaxpay_card_sale': card_not_present,
                 'default_is_bluemaxpay_card_sale_present': card_present,
                 'default_currency_id': self.currency_id.id,

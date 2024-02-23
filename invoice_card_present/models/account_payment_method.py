@@ -14,16 +14,15 @@ class AccountPaymentMethod(models.Model):
             'mode': 'multi', 'domain': [('type', '=', 'bank')]}
         return res
 
-    def get_device_details(self):
+    def get_device_details(self, terminal_id=None):
         print('aaa', self)
-        port = self.env['ir.config_parameter'].sudo(
-        ).get_param('invoice_card_present.port')
-        ip_address = self.env['ir.config_parameter'].sudo(
-        ).get_param('invoice_card_present.ip_address')
-        time_out = self.env['ir.config_parameter'].sudo(
-        ).get_param('invoice_card_present.time_out')
-        version_num = self.env['ir.config_parameter'].sudo(
-        ).get_param('invoice_card_present.version_num')
+        pax_config = self.env['pax.terminal.configuration'].search(
+            [('id', '=', terminal_id)], limit=1)
+
+        port = pax_config.port
+        ip_address = pax_config.ip_address
+        time_out = pax_config.time_out
+        version_num = pax_config.version_num
         print(version_num)
         return {
             'port': port,

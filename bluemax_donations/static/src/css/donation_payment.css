@@ -1,0 +1,30 @@
+.custom-radio input[type="radio"] {
+    position: absolute;
+    left: -9999px;
+}
+
+.custom-radio.active .form-check-label {
+    background-color: #714B67;
+    color: #fff;
+    border-color: #714B67;
+}
+
+.custom-radio.active .form-check-label .text-muted, .form-check:hover .form-check-label .text-muted{
+     color: #FFFFFF !important;
+}
+
+
+.s_donation:not([data-vcss]) #s_donation_amount_input {
+    border: none;
+    outline: none;
+    max-width: 145px;
+    background-color: transparent;
+    font-size: inherit;
+    color: inherit;
+}
+
+.s_donation:not([data-vcss]) input[type=number] {
+    -moz--webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}

@@ -9,7 +9,7 @@
                     <button string="Reset to Draft" name="reset_draft" type="object" invisible = "state != 'cancel'" class="btn-primary" data-hotkey="q" />
                     <button string="Create Payment" name="create_transaction" type="object" invisible = "state != 'draft'" class="btn-primary" data-hotkey="q" />
                     <button string="Void Payment" name="void_transaction" type="object" class="btn-primary" data-hotkey="q" invisible = "payment_type != 'authorize' or state not in ['post','authorize']"/>
-                    <button string="Refund Payment" name="refund_transaction" type="object" class="btn-primary" data-hotkey="q" invisible = "payment_type == 'authorize' or state not in ['post','authorize']" />
+                    <button string="Refund Payment" name="refund_transaction" type="object" class="btn-primary" data-hotkey="q" invisible = "payment_type == 'authorize' or state not in ['post','authorize'] or is_pax_terminal_transaction" />
                     <button string="Capture Payment" name="capture_payment" type="object" invisible = "state != 'authorize'" class="btn-primary" data-hotkey="q" />
                     <field name="state" widget="statusbar" readonly="1" />
                 </header>
@@ -32,6 +32,13 @@
                             <field name="payment_id" />
                             <field name="reference" />
                             <field name="payment_type" />
+                            <field name="terminal_name"  invisible="not is_pax_terminal_transaction" />
+
+                            <span invisible="refund_amount == 0 or state not in ['cancel','draft']" style="width: max-content;display: block;color:red;">This transaction has been refunded.</span>
+                            <br />
+                            <field name="refund_amount" invisible="refund_amount == 0 or state not in ['cancel','draft']"  />
+                            <field name="refund_reference" invisible="refund_amount == 0 or state not in ['cancel','draft']"  />
+                            <field name="is_pax_terminal_transaction" invisible="1" />
                         </group>
                         <group>
                             <field name="date" />
@@ -45,6 +52,13 @@
                             <!--capture-->
                         </group>
                     </group>
+                    <notebook groups="payment_bluemaxpay.group_hide_responses">
+                        <page string="Response Logs">
+                            <group>
+                                <field name="response_log" nolabel="1" placeholder="Transaction Response Logs" />
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -56,12 +70,33 @@
             <tree create="1">
                 <field name="name" />
                 <field name="amount" />
-                <field name="payment_type" invisible="1"/>
+                <field name="payment_type" invisible="1" />
                 <field name="date" />
                 <field name="reference" />
                 <field name="transaction_id" />
                 <field name="state" />
+                <field name="transaction_type" />
             </tree>
+        </field>
+    </record>
+    <record id="view_bluemaxpay_transaction_search" model="ir.ui.view">
+        <field name="name">bluemaxpay.transaction.search.form</field>
+        <field name="model">bluemaxpay.transaction</field>
+        <field name="arch" type="xml">
+            <search string="Tasks">
+                <field name="name" />
+                <field name="amount" />
+                <field name="date" />
+                <field name="reference" />
+                <field name="transaction_id" />
+                <field name="state" />
+                <field name="transaction_type" />
+                <group expand="0" string="Group By">
+                    <filter string="Date" name="date" context="{'group_by': 'date'}" />
+                    <filter string="Payment State" name="state" context="{'group_by': 'state'}" />
+                    <filter string="Transaction Type" name="transaction_type" context="{'group_by': 'transaction_type'}" />
+                </group>
+            </search>
         </field>
     </record>
 </odoo>

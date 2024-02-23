@@ -15,20 +15,44 @@
                                 <field name="save_card" invisible="not is_card" />
                             </group>
                             <group invisible="is_bluemaxpay_card_sale">
-                                <field name="payment_type" invisible="is_bluemaxpay_card_sale" />
+                                <field name="payment_type" required="is_bluemaxpay_card_sale" />
                                 <field name="amount" widget="monetary" />
                                 <field name="sale_id" invisible="1" />
                             </group>
                             <group>
-                                <field name="is_bluemaxpay_card_sale" class="is-bluemaxpay-card-present" />
+                                <field name="is_bluemaxpay_card_sale" class="is-bluemaxpay-card-present" invisible="is_card" />
                             </group>
                             <group />
-                            <group invisible="not is_bluemaxpay_card_sale">
-                                <!-- <widget name="web_ribbon" title="Send Payment Request"/> -->
-                                <widget name="payment_process" string="Send Payment Request" text="Send Payment Request" class="payment_process" action="message_post" />
+                            <field name="pax_config_ids" mode='kanban' class="oe_background_greyssdfsdf" invisible="not is_bluemaxpay_card_sale">
+                                <kanban class="kanban_custom_bluemax">
+                                    <field name="id" />
+                                    <field name="name" />
+                                    <field name="amount_pax" />
+                                    <t t-name="kanban-box">
+                                        <div style="display: inline-block;margin-left: 0px;font-weight: bolder;margin-top: 20px !important;">
+                                            <t t-esc="record.name.value" />
+                                        </div>
+                                        <widget name="payment_process" string="Pay" highlight="1" class="payment_process" action="message_post" t-att-terminal_id="record.id.value or ''" t-att-terminal_name="record.name.value or ''" t-att-amount_pax="record.amount_pax.value or ''" />
+                                    </t>
+                                </kanban>
+                            </field>
+                            <div class="show_confirm_message" style="display:none">Your payment is Successful. Please click on the Button Below.</div>
+                        </group>
+                        <group id="address_sale_details" string="Credit Card Address Details" invisible="not is_card">
+                            <group>
+                                <field name="partner_id_child_ids" context="{'search_default_customer':1}" options='{"always_reload": True}' placeholder="Default Address" />
+                                <field name="customer_street" required="is_card" />
+                                <field name="customer_city" required="is_card" />
+                                <field name="save_address" required="is_card" />
+                            </group>
+                            <group>
+                                <field name="customer_state_id" required="is_card" />
+                                <field name="customer_zip" required="is_card" />
+                                <field name="customer_country_id" required="is_card" />
+                                <field name="save_address_name" required="save_address" invisible="not save_address" />
                             </group>
                         </group>
-                        <group string="Card Details" invisible="not is_card">
+                        <group id="card_sale_details" string="Card Details" invisible="not is_card">
                             <group>
                                 <field name="card_type" widget="radio" options="{'horizontal': true}" />
                                 <field name="card_number" required="is_card" />
@@ -43,7 +67,7 @@
                         </group>
                         <footer>
                             <button string="Payment" id="action_create_payment_sale" name="create_payment" type="object" class="btn-primary" data-hotkey="q" />
-                            <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z" />
+                            <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z" invisible="is_bluemaxpay_card_sale" />
                         </footer>
                     </sheet>
                 </form>

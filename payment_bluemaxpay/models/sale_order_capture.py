@@ -37,25 +37,33 @@ class SaleOrderCapture(models.Model):
             ServicesContainer.configure(config)
             address = Address()
             address.address_type = 'Billing'
-            if not self.transaction_id.partner_id.city or not self.transaction_id.partner_id.state_id or not self.transaction_id.partner_id.country_id:
-                raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
+            if not self.transaction_id.partner_id.city or not self.transaction_id.partner_id.zip or not self.transaction_id.partner_id.state_id or not self.transaction_id.partner_id.country_id or not self.transaction_id.partner_id.street:
+                raise UserError(
+                    "Customer Address, City, State, Zip and Country fields are not set. These are required for payments.")
             address.postal_code = self.transaction_id.partner_id.zip
             address.country = self.transaction_id.partner_id.country_id.name
             if not self.transaction_id.partner_id.state_id.name == "Armed Forces Americas":
                 address.state = self.transaction_id.partner_id.state_id.name
             address.city = self.transaction_id.partner_id.city
             address.street_address_1 = self.transaction_id.partner_id.street
-            address.street_address_1 = self.transaction_id.partner_id.street2
+            address.street_address_2 = self.transaction_id.partner_id.street2
             card = CreditCardData()
             card.token = self.bluemaxpay_transaction_id.card_id.token
             try:
                 response = Transaction.from_id(self.bluemaxpay_transaction_id.transaction) \
                     .capture(self.amount) \
                     .execute()
+                if response.response_code != '00':
+                    raise UserError(
+                        "{} : Please Check your Credentials and Cards details.".format(response.response_message))
             except ApiException as e:
                 _logger.error(e)
                 raise UserError(e)
             if response.response_code == '00':
+                if self.bluemaxpay_transaction_id.response_log:
+                    self.bluemaxpay_transaction_id.response_log += f"\n{response.__dict__}\n{response.transaction_reference.__dict__}\n{response.transaction_reference.payment_method_type.__dict__}\n---------------------------------------------------\n"
+                else:
+                    self.bluemaxpay_transaction_id.response_log = f"\n{response.__dict__}\n{response.transaction_reference.__dict__}\n{response.transaction_reference.payment_method_type.__dict__}\n---------------------------------------------------\n"
                 self.bluemaxpay_transaction_id.un_capture_amount = self.bluemaxpay_transaction_id.amount - self.amount
                 self.bluemaxpay_transaction_id.captured_amount = self.amount
                 self.bluemaxpay_transaction_id.is_capture = True

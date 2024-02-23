@@ -14,10 +14,24 @@
                     <field name="card_id" invisible = "is_card" />
                 </group>
             </xpath>
-             <xpath expr="//field[@name='payment_token_id']" position="attributes">
+            <xpath expr="//field[@name='payment_token_id']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//footer" position="before">
+                <group string="Credit Card Address Details" invisible = "not is_card">
+                    <group>
+                        <field name="partner_id_child_ids" context="{'search_default_customer':1}" options='{"always_reload": True}' placeholder="Default Address" />
+                        <field name="customer_street" required="is_card" />
+                        <field name="customer_city" required="is_card" />
+                        <field name="save_address" required="is_card" />
+                    </group>
+                    <group>
+                        <field name="customer_state_id" required="is_card" />
+                        <field name="customer_zip" required="is_card" />
+                        <field name="customer_country_id" required="is_card" />
+                        <field name="save_address_name" invisible = "not save_address" required="save_address" />
+                    </group>
+                </group>
                 <group string="Card Details" invisible = "not is_card">
                     <group>
                         <field name="card_type" widget="radio" options="{'horizontal': true}" />
@@ -35,7 +49,7 @@
             <xpath expr="//footer" position="replace">
                 <footer>
                     <button string="Create Payment" id="action_create_payments" name="action_create_payments" type="object" class="oe_highlight" data-hotkey="q" />
-                    <button string="Cancel" class="btn btn-secondary" special="cancel" data-hotkey="z" />
+                    <button string="Cancel" class="btn btn-secondary" special="cancel" data-hotkey="z" invisible="is_bluemaxpay_card_present" />
                 </footer>
             </xpath>
         </field>
@@ -46,6 +60,6 @@
         <field name="res_model">bluemaxpay.transaction</field>
         <field name="view_mode">tree,form</field>
     </record>
-    <menuitem id="bluemaxpay_transaction_menu" name="BlueMax Pay Transaction" parent="account.root_payment_menu" action="bluemaxpay_transaction" sequence="20" />
+    <menuitem id="bluemaxpay_transaction_menu" name="BlueMax Pay Transactions" parent="account.root_payment_menu" action="bluemaxpay_transaction" sequence="20" />
     <menuitem id="bluemaxpay_transaction_website_menu" name="BlueMax Pay Transaction" parent="website_sale.menu_ecommerce_settings" action="bluemaxpay_transaction" sequence="20" />
 </odoo>

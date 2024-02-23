@@ -4,6 +4,7 @@ from odoo.addons.payment_bluemaxpay.globalpayments.api.payment_methods import Cr
 from odoo.addons.payment_bluemaxpay.globalpayments.api.entities import Address, Transaction
 from odoo.addons.payment_bluemaxpay.globalpayments.api.entities.exceptions import ApiException
 from stdnum.exceptions import ValidationError
+from odoo.exceptions import UserError
 
 from odoo import _, api, fields, models
 from odoo.addons.payment import utils as payment_utils
@@ -26,7 +27,6 @@ class PaymentTransaction(models.Model):
     payment_type = fields.Selection(
         string='type',
         required=False, related="bluemaxpay_trans_id.payment_type")
-
     payment_method_id = fields.Many2one(
         string="Payment Method", comodel_name='payment.method', readonly=True, required=False
     )
@@ -81,28 +81,31 @@ class PaymentTransaction(models.Model):
         address = Address()
         address.address_type = 'Billing'
         if self.sale_order_ids and self.sale_order_ids.partner_shipping_id:
-            if not self.sale_order_ids.partner_shipping_id.city or not self.sale_order_ids.partner_shipping_id.state_id or not self.sale_order_ids.partner_shipping_id.country_id:
-                raise UserError("Sale Delivery Address City, State, and Country fields are not set. These are required for payments.")
+            if not self.sale_order_ids.partner_shipping_id.city or not self.sale_order_ids.partner_shipping_id.zip or not self.sale_order_ids.partner_shipping_id.state_id or not self.sale_order_ids.partner_shipping_id.country_id or not self.sale_order_ids.partner_shipping_id.street:
+                raise UserError(
+                    "Sale Delivery Address, City, State, Zip and Country fields are not set. These are required for payments.")
             address.postal_code = self.sale_order_ids.partner_shipping_id.zip
             address.country = self.sale_order_ids.partner_shipping_id.country_id.name
             if not self.sale_order_ids.partner_shipping_id.state_id.name == "Armed Forces Americas":
                 address.state = self.sale_order_ids.partner_shipping_id.state_id.name
             address.city = self.sale_order_ids.partner_shipping_id.city
             address.street_address_1 = self.sale_order_ids.partner_shipping_id.street
-            address.street_address_1 = self.sale_order_ids.partner_shipping_id.street2
+            address.street_address_2 = self.sale_order_ids.partner_shipping_id.street2
         elif self.invoice_ids and self.invoice_ids.partner_shipping_id:
-            if not self.invoice_ids.partner_shipping_id.city or not self.invoice_ids.partner_shipping_id.state_id or not self.invoice_ids.partner_shipping_id.country_id:
-                raise UserError("Invoice Delivery Address City, State, and Country fields are not set. These are required for payments.")
+            if not self.invoice_ids.partner_shipping_id.city or not self.invoice_ids.partner_shipping_id.zip or not self.invoice_ids.partner_shipping_id.state_id or not self.invoice_ids.partner_shipping_id.country_id or not self.invoice_ids.partner_shipping_id.street:
+                raise UserError(
+                    "Invoice Delivery Address, City, State, Zip and Country fields are not set. These are required for payments.")
             address.postal_code = self.invoice_ids.partner_shipping_id.zip
             address.country = self.invoice_ids.partner_shipping_id.country_id.name
             if not self.invoice_ids.partner_shipping_id.state_id.name == "Armed Forces Americas":
                 address.state = self.invoice_ids.partner_shipping_id.state_id.name
             address.city = self.invoice_ids.partner_shipping_id.city
             address.street_address_1 = self.invoice_ids.partner_shipping_id.street
-            address.street_address_1 = self.invoice_ids.partner_shipping_id.street2
+            address.street_address_2 = self.invoice_ids.partner_shipping_id.street2
         else:
-            if not partner.city or not partner.state_id or not partner.country_id:
-                raise UserError("Customer Delivery Address City, State, and Country fields are not set. These are required for payments.")
+            if not partner.city or not partner.zip or not partner.state_id or not partner.country_id or not partner.street:
+                raise UserError(
+                    "Customer Delivery Address, City, State, Zip and Country fields are not set. These are required for payments.")
             address.postal_code = partner.zip if partner else None
             address.country = partner.country_id.name if partner else None
             if not partner.state_id.name == "Armed Forces Americas":
@@ -121,6 +124,9 @@ class PaymentTransaction(models.Model):
                 .with_address(address) \
                 .with_request_multi_use_token(True) \
                 .execute()
+            if save_card.response_code != '00':
+                raise UserError(
+                    "{} : Please Check your Credentials and Cards details.".format(response.response_message))
             card_save = self.env['bluemax.token'].sudo().create({
                 'name': self.env.user.partner_id.name,
                 'partner_id': self.env.user.partner_id.id,
@@ -135,6 +141,9 @@ class PaymentTransaction(models.Model):
                     .with_currency(self.env.user.currency_id.name) \
                     .with_address(address) \
                     .execute()
+                if response.response_code != '00':
+                    raise UserError(
+                        "{} : Please Check your Credentials and Cards details.".format(response.response_message))
                 Transaction.from_id(
                     response.transaction_reference.transaction_id) \
                     .capture(float(code.get('amount'))) \
@@ -150,7 +159,9 @@ class PaymentTransaction(models.Model):
                     .with_currency(self.env.company.currency_id.name) \
                     .with_address(address) \
                     .execute()
-
+                if response.response_code != '00':
+                    raise UserError(
+                        "{} : Please Check your Credentials and Cards details.".format(response.response_message))
             except ApiException as e:
                 return {
                     'error_message': True,

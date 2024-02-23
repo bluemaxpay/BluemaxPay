@@ -22,6 +22,46 @@ class BlueMaxPayToken(models.TransientModel):
                                  selection=[('am_express', 'American Express'), ('other', 'Other'), ], required=False,
                                  default='other')
 
+    country_id = fields.Many2one(
+        comodel_name='res.country', related='token_id.country_id', string='Country', required=True)
+    customer_country_id = fields.Many2one(
+        comodel_name='res.country',
+        related='token_id.customer_country_id',
+        string="Customer Country",
+        store=True, readonly=False, required=True)
+    customer_state_id = fields.Many2one(
+        comodel_name='res.country.state',
+        related='token_id.customer_state_id',
+        string="Customer State",
+        # domain="[('country_id', '=', customer_country_id)]",
+        store=True, readonly=False, required=True)
+    customer_city = fields.Char(
+        string="Customer City",
+        related='token_id.customer_city',
+        store=True, readonly=False, required=True)
+    customer_street = fields.Char(
+        string="Customer Street",
+        related='token_id.customer_street',
+        store=True, readonly=False, required=True)
+    customer_zip = fields.Char(
+        string="Customer Zip",
+        related='token_id.customer_zip',
+        store=True, readonly=False, required=True)
+    _skip_onchange_states = fields.Boolean(default=False)
+
+    @api.onchange('customer_country_id')    
+    def onchange_country(self):
+        if self.customer_state_id.country_id.id != self.customer_country_id.id:
+            self.customer_state_id = False
+            self._skip_onchange_states = True
+
+    @api.onchange('customer_state_id')
+    def onchange_states(self):
+        if not self._skip_onchange_states:
+            self.customer_country_id = self.customer_state_id.country_id.id
+        self._skip_onchange_states = False
+
+
     cvv = fields.Char('CVV')
     active = fields.Boolean()
 
@@ -75,15 +115,27 @@ class BlueMaxPayToken(models.TransientModel):
         card.card_holder_name = self.name
         address = Address()
         address.address_type = 'Billing'
-        if not self.partner_id.city or not self.partner_id.state_id or not self.partner_id.country_id:
-            raise UserError("Customer Address City, State, and Country fields are not set. These are required for payments.")
-        address.postal_code = self.partner_id.zip
-        address.country = self.partner_id.country_id.name
-        if not self.partner_id.state_id.name == "Armed Forces Americas":
-            address.state = self.partner_id.state_id.name
-        address.city = self.partner_id.city
-        address.street_address_1 = self.partner_id.street
-        address.street_address_1 = self.partner_id.street2
+
+        if not self.customer_city or not self.customer_zip or not self.customer_state_id or not self.customer_country_id or not self.customer_street:
+            raise UserError(
+                "Address, City, State, Zip and Country fields are not set. These are required for payments.")
+        address.postal_code = self.customer_zip
+        address.country = self.customer_country_id.name
+        if not self.customer_state_id.name == "Armed Forces Americas":
+            address.state = self.customer_state_id.name
+        address.city = self.customer_city
+        address.street_address_1 = self.customer_street
+
+        # if not self.partner_id.city or not self.partner_id.zip or not self.partner_id.state_id or not self.partner_id.country_id or not self.partner_id.street:
+        #     raise UserError(
+        #         "Customer Address, City, State, Zip and Country fields are not set. These are required for card verification.")
+        # address.postal_code = self.partner_id.zip
+        # address.country = self.partner_id.country_id.name
+        # if not self.partner_id.state_id.name == "Armed Forces Americas":
+        #     address.state = self.partner_id.state_id.name
+        # address.city = self.partner_id.city
+        # address.street_address_1 = self.partner_id.street
+        # address.street_address_2 = self.partner_id.street2
         try:
             response = card.verify() \
                 .with_address(address) \

@@ -1,0 +1,28 @@
+{
+    'name': 'Bluemax Receive Sale Payment',
+    'version': "17.0.1.0.0",
+    'summary': 'Using this module user can receive directly payment from sale order. | sale order  | Advance payment | sale payment',
+    'description': """Using this module user can receive directly payment from sale order.
+    """,
+    'category': 'Sales/Sales',
+    'author': 'Kanak Infosystems LLP.',
+    'website': 'https://www.kanakinfosystems.com',
+    'depends': ['sale_management', 'account', 'payment_bluemaxpay'],
+    'images': ['static/description/banner.png'],
+    'data': [
+        'security/ir.model.access.csv',
+        'security/security.xml',
+        'wizard/receive_sale_payment.xml',
+        'views/sale_payment_methods_configuration.xml',
+        'views/report_invoice_document.xml',
+        'views/res_config_settings_view.xml',
+        'views/sale_order_view.xml',
+        'views/account_payment_view.xml',
+    ],
+    'installable': True,
+    'auto_install': False,
+    'application': False,
+    'price': 10,
+    'license': "AGPL-3",
+    'currency': 'EUR',
+}

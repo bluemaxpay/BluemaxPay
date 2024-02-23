@@ -21,6 +21,17 @@
                             <field name="exp_year" />
                         </group>
                     </group>
+                    <group string="Add Saved Card Address Details">
+                        <group>
+                            <field name="customer_street" />
+                            <field name="customer_city" />
+                            <field name="customer_state_id" />
+                        </group>
+                        <group>
+                            <field name="customer_zip" />
+                            <field name="customer_country_id" />
+                        </group>
+                    </group>
                 </sheet>
                 <footer>
                     <button string="Token" name="create_token" type="object" class="btn-primary" data-hotkey="q" />

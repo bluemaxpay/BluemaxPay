@@ -23,6 +23,7 @@ class PosPayment(models.Model):
     ], default='done', string='Status', readonly=True)
 
 
+
     def pos_void(self):
         if not self.transaction_id:
             raise UserError('BlueMax Pay Transaction does not exist')

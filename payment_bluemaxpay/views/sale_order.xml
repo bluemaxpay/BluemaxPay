@@ -9,6 +9,26 @@
                 <xpath expr="//button[@name='action_cancel']" position="before">
                     <button name="create_payment" data-hotkey="v" string="Create Payment" type="object" invisible="state != 'sale' or invoice_status == 'invoiced'" />
                 </xpath>
+                <xpath expr="//group[@name='note_group']" position="after">
+                    <group invisible="not is_payment_link_paid">
+                        <group string="Website Transaction Details For Review">
+                            <field name="is_payment_link_paid" invisible="1" />
+                            <field name="paymentlink_card_name" style="margin-bottom:10px;" />
+                            <field name="paymentlink_address_note" style="margin-bottom:10px;" />
+                            <field name="paymentlink_customer_ip" style="margin-bottom:30px;" />
+                        </group>
+                        <group string="Geolocation based on Transaction IP">
+                            <field name="city" />
+                            <field name="region" />
+                            <field name="country" />
+                            <field name="postal" />
+                            <field name="timezone" />
+                            <field name="loc" />
+                            <field name="org" />
+                            <field name="map_image" widget="image" style="max-width:80%;max-height:80%;border:2px solid black;overflow: auto;" />
+                        </group>
+                    </group>
+                </xpath>
             </field>
         </record>
     </data>

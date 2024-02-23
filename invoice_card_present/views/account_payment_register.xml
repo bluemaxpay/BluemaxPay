@@ -10,14 +10,20 @@
                     <field name="is_bluemaxpay_card_present" class="is-bluemaxpay-card-present" invisible="1" />
                 </xpath>
                 <xpath expr="//group[@name='group2']" position="after">
-                    <group invisible="not is_bluemaxpay_card_present">
-                        <style>
-                            .o_widget_payment_process button{
-
-                            }
-                        </style>
-                        <widget name="payment_process" string="Send Payment Request" highlight="1" class="payment_process" action="message_post" />
-                    </group>
+                    <field name="pax_config_ids_invoice" mode='kanban' class="oe_background_greyssdfsdf" invisible="not is_bluemaxpay_card_present">
+                        <kanban class="kanban_custom_bluemax">
+                            <field name="id" />
+                            <field name="name" />
+                            <field name="amount_pax" />
+                            <t t-name="kanban-box">
+                                <div style="display: inline-block;margin-left: 0px;font-weight: bolder;margin-top: 20px !important;">
+                                    <t t-esc="record.name.value" />
+                                </div>
+                                <widget name="payment_process" string="Pay" highlight="1" class="payment_process" action="message_post" t-att-terminal_id="record.id.value or ''" t-att-terminal_name="record.name.value or ''" t-att-amount_pax="record.amount_pax.value or ''" />
+                            </t>
+                        </kanban>
+                    </field>
+                    <div class="show_confirm_message" style="display:none">Your payment is Successful. Please click on the Button Below.</div>
                 </xpath>
                 <xpath expr="//button[@name='action_create_payments']" position="replace">
                     <button string="Create Payment" name="action_create_payments" id="create-bluemaxpay-payment" type="object" class="oe_highlight" data-hotkey="q" />

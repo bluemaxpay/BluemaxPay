@@ -3,6 +3,7 @@
     'version': '17.0.1.0',
     'category': 'Sales/Point Of Sale',
     'sequence': 20,
+    'author': "BlueMax Pay",
     'summary': 'Payment Acquirer: BlueMax Pay Implementation',
     'description': """BlueMax Pay Payment Acquirer""",
     'depends': ['point_of_sale'],

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="knk_view_account_payment_form" model="ir.ui.view">
+        <field name="name">knk.account.payment.form</field>
+        <field name="model">account.payment</field>
+        <field name="inherit_id" ref="account.view_account_payment_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="sale_id" context="{'default_sale_id': active_id}" groups="account.group_account_invoice" invisible="sale_count == 0"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_saleorder" type="object" class="oe_stat_button" icon="fa-pencil-square-o" invisible="sale_count == 0">
+                    <field name="sale_count" widget="statinfo" string="SaleOrder" />
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

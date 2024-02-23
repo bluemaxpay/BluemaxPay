@@ -79,7 +79,7 @@ class RestGateway(Gateway):
                        data=None,
                        query_string_params=None):
         response = self.send_request(verb, endpoint, data, query_string_params)
-        if response.status_code is not 200 and response.status_code is not 204:
+        if response.status_code != 200 and response.status_code != 204:
             parsed = jsonpickle.decode(response.raw_response)
             error = parsed if 'error' not in parsed else parsed['error']
             raise GatewayException('Status Code: {} - {}'.format(
@@ -93,7 +93,7 @@ class XmlGateway(Gateway):
 
     def do_transaction(self, request):
         response = self.send_request('POST', '', request)
-        if response.status_code is not 200:
+        if response.status_code != 200:
             raise GatewayException('Unexpected http status code [{}]'.format(
                 response.status_code))
         return response.raw_response

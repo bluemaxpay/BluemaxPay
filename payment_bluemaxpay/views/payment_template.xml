@@ -1,6 +1,165 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
-   <!--  <template id="website_sale.payment" name="Payment">
+    <template id="report_sale_order_custom" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//div[@class='page']" position="replace">
+            <div class="page">
+                <div class="oe_structure" />
+                <h2 class="mt-4">
+                    <span t-if="env.context.get('proforma', False) or is_pro_forma">Pro-Forma Invoice # </span>
+                    <span t-elif="doc.state in ['draft','sent']">Quotation # </span>
+                    <span t-else="">Order # </span>
+                    <span t-field="doc.name">SO0000</span>
+                </h2>
+                <div class="row mt-4 mb-2" id="informations">
+                    <div t-if="doc.client_order_ref" class="col-auto col-3 mw-100 mb-2" name="informations_reference">
+                        <strong>Your Reference:</strong><br />
+                        <span class="m-0" t-field="doc.client_order_ref">SO0000</span>
+                    </div>
+                    <div t-if="doc.date_order" class="col-auto col-3 mw-100 mb-2" name="informations_date">
+                        <strong t-if="doc.state in ['draft', 'sent']">Quotation Date:</strong>
+                        <strong t-else="">Order Date:</strong><br />
+                        <span class="m-0" t-field="doc.date_order" t-options='{"widget": "date"}'>2023-12-31</span>
+                    </div>
+                    <div t-if="doc.validity_date and doc.state in ['draft', 'sent']" class="col-auto col-3 mw-100 mb-2" name="expiration_date">
+                        <strong>Expiration:</strong><br />
+                        <span class="m-0" t-field="doc.validity_date">2023-12-31</span>
+                    </div>
+                    <div t-if="doc.user_id.name" class="col-auto col-3 mw-100 mb-2">
+                        <strong>Salesperson:</strong><br />
+                        <span class="m-0" t-field="doc.user_id">Mitchell Admin</span>
+                    </div>
+                </div>
+                <!-- Is there a discount on at least one line? -->
+                <t t-set="lines_to_report" t-value="doc._get_order_lines_to_report()" />
+                <t t-set="display_discount" t-value="any(l.discount for l in lines_to_report)" />
+                <div class="oe_structure"></div>
+                <table class="table table-sm o_main_table table-borderless mt-4">
+                    <!-- In case we want to repeat the header, remove "display: table-row-group" -->
+                    <thead style="display: table-row-group">
+                        <tr>
+                            <th name="th_description" class="text-start">Description</th>
+                            <th name="th_quantity" class="text-end">Quantity</th>
+                            <th name="th_priceunit" class="text-end">Unit Price</th>
+                            <th name="th_discount" t-if="display_discount" class="text-end">
+                                <span>Disc.%</span>
+                            </th>
+                            <th name="th_taxes" class="text-end">Taxes</th>
+                            <th name="th_subtotal" class="text-end">
+                                <span>Amount</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="sale_tbody">
+                        <t t-set="current_subtotal" t-value="0" />
+                        <t t-foreach="lines_to_report" t-as="line">
+                            <t t-set="current_subtotal" t-value="current_subtotal + line.price_subtotal" />
+                            <tr t-att-class="'bg-200 fw-bold o_line_section' if line.display_type == 'line_section' else 'fst-italic o_line_note' if line.display_type == 'line_note' else ''">
+                                <t t-if="not line.display_type">
+                                    <td name="td_name"><span t-field="line.name">Bacon Burger</span></td>
+                                    <td name="td_quantity" class="text-end">
+                                        <span t-field="line.product_uom_qty">3</span>
+                                        <span t-field="line.product_uom">units</span>
+                                        <span t-if="line.product_packaging_id">
+                                            (<span t-field="line.product_packaging_qty" t-options='{"widget": "integer"}' /> <span t-field="line.product_packaging_id" />)
+                                        </span>
+                                    </td>
+                                    <td name="td_priceunit" class="text-end">
+                                        <span t-field="line.price_unit">3</span>
+                                    </td>
+                                    <td t-if="display_discount" class="text-end">
+                                        <span t-field="line.discount">-</span>
+                                    </td>
+                                    <td name="td_taxes" class="text-end">
+                                        <span t-out="', '.join(map(lambda x: (x.description or x.name), line.tax_id))">
+                                            Tax 15%
+                                        </span>
+                                    </td>
+                                    <td t-if="not line.is_downpayment" name="td_subtotal" class="text-end o_price_total">
+                                        <span t-field="line.price_subtotal">27.00</span>
+                                    </td>
+                                </t>
+                                <t t-elif="line.display_type == 'line_section'">
+                                    <td name="td_section_line" colspan="99">
+                                        <span t-field="line.name">A section title</span>
+                                    </td>
+                                    <t t-set="current_section" t-value="line" />
+                                    <t t-set="current_subtotal" t-value="0" />
+                                </t>
+                                <t t-elif="line.display_type == 'line_note'">
+                                    <td name="td_note_line" colspan="99">
+                                        <span t-field="line.name">A note, whose content usually applies to the section or product above.</span>
+                                    </td>
+                                </t>
+                            </tr>
+                            <t t-if="current_section and (line_last or doc.order_line[line_index+1].display_type == 'line_section') and not line.is_downpayment">
+                                <tr class="is-subtotal text-end">
+                                    <td name="td_section_subtotal" colspan="99">
+                                        <strong class="mr16">Subtotal</strong>
+                                        <span t-out="current_subtotal" t-options='{"widget": "monetary", "display_currency": doc.currency_id}'>31.05</span>
+                                    </td>
+                                </tr>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+                <div class="clearfix" name="so_total_summary">
+                    <div id="total" class="row" name="total">
+                        <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto">
+                            <table class="table table-sm table-borderless">
+                                <!-- Tax totals -->
+                                <t t-set="tax_totals" t-value="doc.tax_totals" />
+                                <t t-call="sale.document_tax_totals" />
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="oe_structure"></div>
+                <div t-if="not doc.signature" class="oe_structure"></div>
+                <div t-else="" class="mt-4 ml64 mr4" name="signature">
+                    <div class="offset-8">
+                        <strong>Signature</strong>
+                    </div>
+                    <div class="offset-8">
+                        <img t-att-src="image_data_uri(doc.signature)" style="max-height: 4cm; max-width: 8cm;" />
+                    </div>
+                    <div class="offset-8 text-center">
+                        <span t-field="doc.signed_by">Oscar Morgan</span>
+                    </div>
+                </div>
+                <div>
+                    <span t-field="doc.note" name="order_note" />
+                    <p t-if="not is_html_empty(doc.payment_term_id.note)">
+                        <span t-field="doc.payment_term_id.note">The payment should also be transmitted with love</span>
+                    </p>
+                    <p t-if="doc.fiscal_position_id and not is_html_empty(doc.fiscal_position_id.sudo().note)" id="fiscal_position_remark">
+                        <strong>Fiscal Position Remark:</strong>
+                        <span t-field="doc.fiscal_position_id.sudo().note">No further requirements for this payment</span>
+                    </p>
+                </div>
+                <t t-set="enable_pdf_payment" t-value="request.env['payment.provider'].sudo().search([('code', '=', 'bluemaxpay')]).enable_pdf_payment" />
+                <t t-if="doc.is_payment_link_paid == false and enable_pdf_payment == true">
+                    <t t-set="base_url" t-value="doc.get_base_url()" />
+                    <a t-attf-href="#{base_url}/payment/pay?reference=#{doc.name}&amp;amount=#{doc._get_payment_link_amount()}&amp;access_token=#{doc._get_access_token()}&amp;sale_order_id=#{doc.id}" target="_blank">
+                        <img t-att-src="'/payment_bluemaxpay/static/src/img/pay.png'" style="max-height: 150px; max-width: 300px;" />
+                    </a>
+                </t>
+            </div>
+        </xpath>
+    </template>
+    <template id="payment_footer_bluemax" inherit_id="payment.submit_button" name="Payment Footer">
+        <xpath expr="//button" position="replace">
+            <t t-if="request.params.get('sale_order_id' , False)">
+                <t t-set="sale_order" t-value="request.env['sale.order'].sudo().search([('id', '=', request.params.get('sale_order_id' , False))])" />
+                <t t-if="sale_order.is_payment_link_paid == false">
+                    <button name="o_payment_submit_button" type="submit" t-out="submit_button_label" class="btn btn-primary w-100 w-md-auto ms-auto px-5" disabled="true" />
+                </t>
+            </t>
+            <t t-else="">
+                <button name="o_payment_submit_button" type="submit" t-out="submit_button_label" class="btn btn-primary w-100 w-md-auto ms-auto px-5" disabled="true" />
+            </t>
+        </xpath>
+    </template>
+    <!-- <template id="website_sale.payment_footer" name="Payment">
         <xpath expr="." position="replace">
             <div name="o_checkbox_container" class="custom-control custom-checkbox mt-2 o_accept_tc_button" />
             <div class="float-left mt-2">
@@ -20,51 +179,278 @@
     <template id="bluemaxpay_form">
         <div class="card_form_details">
             <div class="row">
-                <div class="col-sm-4 form-group">
-                    <t t-if="not user_id._is_public()">
-                        <input type="checkbox" id="is_card" name="is_card" />
-                        <label for="is_card">Use Saved Card</label>
+                <t t-if="request.params.get('sale_order_id' , False)">
+                    <t t-set="sale_order" t-value="request.env['sale.order'].sudo().search([('id', '=', request.params.get('sale_order_id' , False))])" />
+                    <t t-if="sale_order.partner_shipping_id">
+                        <t t-set="payment_address" t-value="sale_order.partner_shipping_id" />
                     </t>
-                </div>
-                <div class="col-sm-4 form-group" id="is-card-save">
-                    <input type="checkbox" id="is_card_save" name="is_card_save" />
-                    <label for="is_card_save">Save Card</label>
-                </div>
-                <t t-set="token" t-value="request.env['bluemax.token'].sudo().search([('partner_id', '=', partner_id)])" />
-                <div class="col-md-12 d-none" id="bluemaxpay-token">
-                    <label class="font-weight-normal device" for="token">
-                        Saved Tokens
-                    </label>
-                    <select id="token" name="token" t-att-value="token" class="form-control o_website_form_input" required="">
-                        <option value="" />
-                        <t t-foreach="token" t-as="token">
-                            <option t-att-value="token['id']">
-                                <t t-esc="token['name']" />
-                            </option>
+                    <t t-elif="sale_order.partner_id">
+                        <t t-set="payment_address" t-value="sale_order.partner_id" />
+                    </t>
+                </t>
+                <t t-if="request.params.get('invoice_id' , False)">
+                    <t t-set="invoice" t-value="request.env['account.move'].sudo().search([('id', '=', request.params.get('invoice_id' , False))])" />
+                    <t t-if="invoice.partner_shipping_id">
+                        <t t-set="payment_address" t-value="invoice.partner_shipping_id" />
+                    </t>
+                    <t t-elif="invoice.partner_id">
+                        <t t-set="payment_address" t-value="invoice.partner_id" />
+                    </t>
+                </t>
+                <t t-if="request.params.get('sale_order_id' , False)">
+                    <t t-if="sale_order.is_payment_link_paid == true">
+                        <div style="color: white;height:25px;opacity:1; margin-top: 20px; margin-bottom: 0px;background:green;text-align:center;" id="web_warning">This Link Has Already Been Paid</div>
+                    </t>
+                </t>
+                <t t-if="request.params.get('sale_order_id' , False)">
+                    <t t-if="sale_order.is_payment_link_paid == false">
+                        <div class="col-sm-4 form-group">
+                            <t t-if="not user_id._is_public()">
+                                <input type="checkbox" id="is_card" name="is_card" />
+                                <label for="is_card">Use Saved Card</label>
+                            </t>
+                        </div>
+                        <t t-if="not user_id._is_public()">
+                            <div class="col-sm-4 form-group" id="is-card-save">
+                                <input type="checkbox" id="is_card_save" name="is_card_save" />
+                                <label for="is_card_save">Save Card</label>
+                            </div>
                         </t>
-                    </select>
-                </div>
-                <div class="col-sm-12 form-group" id="card_number">
-                    <label class="col-form-label">Card Number</label>
-                    <input type="text" id='card-number' required="" maxlength="19" class="form-control" />
-                </div>
-                <div class="col-sm-5 form-group" id="card_name">
-                    <label class="col-form-label">Name On Card</label>
-                    <input type="text" id='card-name' required="" class="form-control" />
-                </div>
-                <div class="col-sm-5 form-group" id="card_exp_month">
-                    <label>Expiry Month</label>
-                    <input type="number" id='card-exp-month' placeholder="MM" min="1" max="12" required="" class="form-control" />
-                </div>
-                <div class="col-sm-5 form-group" id="card_exp_year">
-                    <label>Expiry Year</label>
-                    <input type="number" id='card-exp-year' placeholder="YYYY" maxlength="4" required="" class="form-control" />
-                </div>
-                <div class="col-sm-5 form-group" id="card_code">
-                    <label>Card Code</label>
-                    <input type="number" id='card-code' max="9999" class="form-control" />
-                </div>
+                        <t t-if="payment_address">
+                            <t t-if="not user_id._is_public()">
+                                <div class="col-sm-4 form-group" id="is-address-save">
+                                    <input type="checkbox" id="is_address_save" name="is_address_save" />
+                                    <label for="is_address_save">Save Address</label>
+                                </div>
+                            </t>
+                        </t>
+                        <br />
+                        <t t-if="payment_address">
+                            <t t-set="saved_addresses" t-value="payment_address.child_ids.filtered(lambda r: r.type != 'contact')" />
+                            <input type="hidden" id="payment_address_hidden" t-att-value="payment_address.id" />
+                            <input type="hidden" id="payment_address_hidden_state" t-att-value="payment_address.state_id.id" />
+                            <input type="hidden" id="payment_address_hidden_country" t-att-value="payment_address.country_id.id" />
+                            <t t-if="not user_id._is_public()">
+                                <div class="col-sm-5" id="bluemaxpay-saved-addresses">
+                                    <label class="font-weight-normal device col-form-label" for="saved_addresses">
+                                        Saved Addresses
+                                    </label>
+                                    <select id="saved_addresses" name="saved_addresses" t-att-value="saved_addresses" class="form-control o_website_form_input" required="">
+                                        <option value="">Default Address</option>
+                                        <t t-foreach="saved_addresses" t-as="saved_address">
+                                            <option t-att-value="saved_address['id']">
+                                                <t t-esc="saved_address['name']" />
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </t>
+                            <t t-if="not user_id._is_public()">
+                                <div class="col-sm-5 form-group" id="web_street">
+                                    <label class="col-form-label">Street</label>
+                                    <input type="text" id='web-street' placeholder="Required" class="form-control" t-att-value="payment_address.street" />
+                                </div>
+                            </t>
+                            <t t-if="user_id._is_public()">
+                                <div class="col-sm-12 form-group" id="web_street">
+                                    <label class="col-form-label">Street</label>
+                                    <input type="text" id='web-street' placeholder="Required" class="form-control" t-att-value="payment_address.street" />
+                                </div>
+                            </t>
+                            <div class="col-sm-5 form-group" id="web_city">
+                                <label class="col-form-label">City</label>
+                                <input type="text" id='web-city' placeholder="Required" class="form-control" t-att-value="payment_address.city" />
+                            </div>
+                            <div class="col-sm-5 form-group" id="web_state">
+                                <label class="col-form-label">State</label>
+                                <select id='web-state' class="form-control" required="">
+                                    <option value="" t-if="not payment_address.state_id" />
+                                    <option t-foreach="request.env['res.country.state'].sudo().search([])" t-as="state" t-att-value="state.id">
+                                        <t t-esc="state.name" />
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-5 form-group" id="web_country">
+                                <label class="col-form-label">Country</label>
+                                <select id='web-country' class="form-control" required="">
+                                    <option value="" t-if="not payment_address.country_id" />
+                                    <option t-foreach="request.env['res.country'].sudo().search([])" t-as="country" t-att-value="country.id">
+                                        <t t-esc="country.name" />
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-5 form-group" id="web_zip">
+                                <label class="col-form-label">ZIP</label>
+                                <input type="text" id='web-zip' placeholder="Required" class="form-control" t-att-value="payment_address.zip" />
+                            </div>
+                            <div class="col-sm-12 form-group d-none" id="name_save_address">
+                                <label class="col-form-label">Name On Saved Address</label>
+                                <input type="text" id='name-save-address' required="" class="form-control" />
+                            </div>
+                            <hr style="color: #b3b3b3;height:0.1px;opacity:1; margin-top: 30px; margin-bottom: 0px;" id="web_hr" />
+                        </t>
+                        <t t-set="token" t-value="request.env['bluemax.token'].sudo().search([('partner_id', '=', partner_id)])" />
+                        <div class="col-md-12 d-none" id="bluemaxpay-token">
+                            <label class="font-weight-normal device" for="token">
+                                Saved Cards
+                            </label>
+                            <select id="token" name="token" t-att-value="token" class="form-control o_website_form_input" required="">
+                                <option value="" />
+                                <t t-foreach="token" t-as="token">
+                                    <option t-att-value="token['id']">
+                                        <t t-esc="token['name']" />
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                        <br />
+                        <br />
+                        <div class="col-sm-12 form-group" id="card_number">
+                            <label class="col-form-label">Card Number</label>
+                            <input type="text" id='card-number' required="" maxlength="19" class="form-control" />
+                        </div>
+                        <div class="col-sm-5 form-group" id="card_name">
+                            <label class="col-form-label">Name On Card</label>
+                            <input type="text" id='card-name' required="" class="form-control" />
+                        </div>
+                        <div class="col-sm-5 form-group" id="card_exp_month">
+                            <label class="col-form-label">Expiry Month</label>
+                            <input type="number" id='card-exp-month' placeholder="MM" min="1" max="12" required="" class="form-control" />
+                        </div>
+                        <div class="col-sm-5 form-group" id="card_exp_year">
+                            <label class="col-form-label">Expiry Year</label>
+                            <input type="number" id='card-exp-year' placeholder="YYYY" maxlength="4" required="" class="form-control" />
+                        </div>
+                        <div class="col-sm-5 form-group" id="card_code">
+                            <label class="col-form-label">Card Code</label>
+                            <input type="number" id='card-code' max="9999" class="form-control" />
+                        </div>
+                    </t>
+                </t>
+                <t t-else="">
+                    <div class="col-sm-4 form-group">
+                        <t t-if="not user_id._is_public()">
+                            <input type="checkbox" id="is_card" name="is_card" />
+                            <label for="is_card">Use Saved Card</label>
+                        </t>
+                    </div>
+                    <t t-if="not user_id._is_public()">
+                        <div class="col-sm-4 form-group" id="is-card-save">
+                            <input type="checkbox" id="is_card_save" name="is_card_save" />
+                            <label for="is_card_save">Save Card</label>
+                        </div>
+                    </t>
+                    <t t-if="payment_address">
+                        <t t-if="not user_id._is_public()">
+                            <div class="col-sm-4 form-group" id="is-address-save">
+                                <input type="checkbox" id="is_address_save" name="is_address_save" />
+                                <label for="is_address_save">Save Address</label>
+                            </div>
+                        </t>
+                    </t>
+                    <t t-if="payment_address">
+                        <t t-set="saved_addresses" t-value="payment_address.child_ids.filtered(lambda r: r.type != 'contact')" />
+                        <input type="hidden" id="payment_address_hidden" t-att-value="payment_address.id" />
+                        <input type="hidden" id="payment_address_hidden_state" t-att-value="payment_address.state_id.id" />
+                        <input type="hidden" id="payment_address_hidden_country" t-att-value="payment_address.country_id.id" />
+                        <t t-if="not user_id._is_public()">
+                            <div class="col-sm-5" id="bluemaxpay-saved-addresses">
+                                <label class="font-weight-normal device col-form-label" for="saved_addresses">
+                                    Saved Addresses
+                                </label>
+                                <select id="saved_addresses" name="saved_addresses" t-att-value="saved_addresses" class="form-control o_website_form_input" required="">
+                                    <option value="">Default Address</option>
+                                    <t t-foreach="saved_addresses" t-as="saved_address">
+                                        <option t-att-value="saved_address['id']">
+                                            <t t-esc="saved_address['name']" />
+                                        </option>
+                                    </t>
+                                </select>
+                            </div>
+                        </t>
+                        <t t-if="not user_id._is_public()">
+                            <div class="col-sm-5 form-group" id="web_street">
+                                <label class="col-form-label">Street</label>
+                                <input type="text" id='web-street' placeholder="Required" class="form-control" t-att-value="payment_address.street" />
+                            </div>
+                        </t>
+                        <t t-if="user_id._is_public()">
+                            <div class="col-sm-12 form-group" id="web_street">
+                                <label class="col-form-label">Street</label>
+                                <input type="text" id='web-street' placeholder="Required" class="form-control" t-att-value="payment_address.street" />
+                            </div>
+                        </t>
+                        <div class="col-sm-5 form-group" id="web_city">
+                            <label class="col-form-label">City</label>
+                            <input type="text" id='web-city' placeholder="Required" class="form-control" t-att-value="payment_address.city" />
+                        </div>
+                        <div class="col-sm-5 form-group" id="web_state">
+                            <label class="col-form-label">State</label>
+                            <select id='web-state' class="form-control" required="">
+                                <option value="" t-if="not payment_address.state_id" />
+                                <option t-foreach="request.env['res.country.state'].sudo().search([])" t-as="state" t-att-value="state.id">
+                                    <t t-esc="state.name" />
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-sm-5 form-group" id="web_country">
+                            <label class="col-form-label">Country</label>
+                            <select id='web-country' class="form-control" required="">
+                                <option value="" t-if="not payment_address.country_id" />
+                                <option t-foreach="request.env['res.country'].sudo().search([])" t-as="country" t-att-value="country.id">
+                                    <t t-esc="country.name" />
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-sm-5 form-group" id="web_zip">
+                            <label class="col-form-label">ZIP</label>
+                            <input type="text" id='web-zip' placeholder="Required" class="form-control" t-att-value="payment_address.zip" />
+                        </div>
+                        <div class="col-sm-12 form-group d-none" id="name_save_address">
+                            <label class="col-form-label">Name On Saved Address</label>
+                            <input type="text" id='name-save-address' required="" class="form-control" />
+                        </div>
+                        <hr style="color: #b3b3b3;height:0.1px;opacity:1; margin-top: 30px; margin-bottom: 0px;" id="web_hr" />
+                    </t>
+                    <t t-set="token" t-value="request.env['bluemax.token'].sudo().search([('partner_id', '=', partner_id)])" />
+                    <div class="col-md-12 d-none" id="bluemaxpay-token">
+                        <label class="font-weight-normal device" for="token">
+                            Saved Cards
+                        </label>
+                        <select id="token" name="token" t-att-value="token" class="form-control o_website_form_input" required="">
+                            <option value="" />
+                            <t t-foreach="token" t-as="token">
+                                <option t-att-value="token['id']">
+                                    <t t-esc="token['name']" />
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+                    <br />
+                    <br />
+                    <div class="col-sm-12 form-group" id="card_number">
+                        <label class="col-form-label">Card Number</label>
+                        <input type="text" id='card-number' required="" maxlength="19" class="form-control" />
+                    </div>
+                    <div class="col-sm-5 form-group" id="card_name">
+                        <label class="col-form-label">Name On Card</label>
+                        <input type="text" id='card-name' required="" class="form-control" />
+                    </div>
+                    <div class="col-sm-5 form-group" id="card_exp_month">
+                        <label class="col-form-label">Expiry Month</label>
+                        <input type="number" id='card-exp-month' placeholder="MM" min="1" max="12" required="" class="form-control" />
+                    </div>
+                    <div class="col-sm-5 form-group" id="card_exp_year">
+                        <label class="col-form-label">Expiry Year</label>
+                        <input type="number" id='card-exp-year' placeholder="YYYY" maxlength="4" required="" class="form-control" />
+                    </div>
+                    <div class="col-sm-5 form-group" id="card_code">
+                        <label class="col-form-label">Card Code</label>
+                        <input type="number" id='card-code' max="9999" class="form-control" />
+                    </div>
+                </t>
             </div>
+            <br />
         </div>
         <!--        <div id="credit-card">-->
         <!--            <br/>-->
@@ -79,12 +465,14 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_lang']" position="after">
                 <field name="bluemaxpay_trans_id" />
-                <field name="captured_amount"/>
-                <field name="payment_type" invisible="1"/>
-
+                <field name="captured_amount" />
+                <field name="payment_type" invisible="1" />
+            </xpath>
+            <xpath expr="//field[@name='last_state_change']" position="after">
+                <span invisible="not bluemaxpay_trans_id or state not in ['cancel']" style="width: max-content;display: block;color:red;">The Linked Bluemax Pay transaction has been canceled / refunded.</span>
             </xpath>
             <xpath expr="//sheet//div[@name='button_box']" position="inside">
-                <button name="action_view_bluemaxpay_trans" type="object" class="oe_stat_button" icon="fa-money" invisible = "not bluemaxpay_trans_id">
+                <button name="action_view_bluemaxpay_trans" type="object" class="oe_stat_button" icon="fa-money" invisible="not bluemaxpay_trans_id">
                     <field name="bluemaxpay_trans_count" widget="statinfo" string="BlueMax Pay Transaction(s)" />
                 </button>
             </xpath>

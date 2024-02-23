@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data noupdate="1">
+		<record id="donation_amount_5" model="donation.amount">
+			<field name="name">5</field>
+			<field name="amount">5</field>
+		</record><record id="donation_amount_10" model="donation.amount">
+			<field name="name">10</field>
+			<field name="amount">10</field>
+		</record><record id="donation_amount_20" model="donation.amount">
+			<field name="name">20</field>
+			<field name="amount">20</field>
+		</record><record id="donation_amount_30" model="donation.amount">
+			<field name="name">30</field>
+			<field name="amount">30</field>
+		</record><record id="donation_amount_50" model="donation.amount">
+			<field name="name">50</field>
+			<field name="amount">50</field>
+		</record><record id="donation_amount_80" model="donation.amount">
+			<field name="name">80</field>
+			<field name="amount">80</field>
+		</record><record id="donation_amount_100" model="donation.amount">
+			<field name="name">100</field>
+			<field name="amount">100</field>
+		</record>
+	</data>
+</odoo>
