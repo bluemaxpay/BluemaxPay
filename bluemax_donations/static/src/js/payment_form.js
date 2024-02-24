@@ -9,7 +9,9 @@ PaymentForm.include({
     events: Object.assign({}, PaymentForm.prototype.events || {}, {
         'change input[name="knk_donation_amount"]': '_updateAmount',
         'click .custom-radio': '_onClickCustomRadio',
-        'click .custom-radio input[type="radio"]': '_onHiddenRadioClick'
+        'click .custom-radio input[type="radio"]': '_onHiddenRadioClick',
+        'input .o_amount_input': '_onOtherAmountInput',
+        'change select[name="country_id"]': '_onChangeDonationCountry',
     }),
 
     // #=== WIDGET LIFECYCLE ===#
@@ -24,6 +26,10 @@ PaymentForm.include({
 
     _onClickCustomRadio: function (ev) {
         var $target = $(ev.currentTarget);
+        var $amountInput = $target.closest('.knk_donation_payment_form').find('.o_amount_input');
+        // Clear the value of the input field
+        $amountInput.val('');
+        $target.closest('.knk_donation_payment_form').find('#other_amount').prop('checked', false);
         $target.siblings().removeClass('active');
         $target.addClass('active');
         $target.find('input[type="radio"]').click();
@@ -32,6 +38,48 @@ PaymentForm.include({
     _onHiddenRadioClick: function (ev) {
         // Stop propagation to prevent double triggering
         ev.stopPropagation();
+    },
+
+    _onOtherAmountInput: function (ev) {
+        var $target = $(ev.currentTarget);
+        var $radio = $target.closest('.knk_donation_payment_form').find('.custom-radio-container').find('input[type="radio"]');
+        // Uncheck the radio button and remove active class when input is not empty
+        if ($target.val().trim() !== '') {
+            $radio.prop('checked', false);
+            $target.closest('.knk_donation_payment_form').find('.custom-radio-container').find('.custom-radio').removeClass('active');
+        }
+    },
+
+    _onChangeDonationCountry: function () {
+        if (!$("#country_id").val()) {
+            return;
+        }
+        return this.rpc("/donation/country_infos/" + $("#country_id").val(), {
+        }).then(function (data) {
+            // placeholder phone_code
+            $("input[name='phone']").attr('placeholder', data.phone_code !== 0 ? '+'+ data.phone_code : '');
+
+            // populate states and display
+            var selectStates = $("select[name='state_id']");
+            // dont reload state at first loading (done in qweb)
+            if (selectStates.data('init')===0 || selectStates.find('option').length===1) {
+                if (data.states.length || data.state_required) {
+                    selectStates.html('');
+                    data.states.forEach((x) => {
+                        var opt = $('<option>').text(x[1])
+                            .attr('value', x[0])
+                            .attr('data-code', x[2]);
+                        selectStates.append(opt);
+                    });
+                    selectStates.parent('div').show();
+                } else {
+                    selectStates.val('').parent('div').hide();
+                }
+                selectStates.data('init', 0);
+            } else {
+                selectStates.data('init', 0);
+            }
+        });
     },
 
     // #=== EVENT HANDLERS ===#
@@ -48,6 +96,7 @@ PaymentForm.include({
             this.paymentContext.amount = ev.target.value;
         }
     },
+
 
     /**
      * Update the total amount to be paid.
@@ -77,8 +126,13 @@ PaymentForm.include({
     async _initiatePaymentFlow(providerCode, paymentOptionId, paymentMethodCode, flow) {
         if ($('.knk_donation_payment_form').length) {
             const errorFields = {};
+            if (!this.$('input[name="email"]')[0].checkValidity()) {
+                errorFields['email'] = _t("Email is invalid");
+            }
             const mandatoryFields = {
                 'name': _t('Name'),
+                'email': _t('Email'),
+                'country_id': _t('Country'),
             };
             for (const id in mandatoryFields) {
                 const $field = this.$('input[name="' + id + '"],select[name="' + id + '"]');
@@ -120,7 +174,16 @@ PaymentForm.include({
             'reference_prefix':this.paymentContext['referencePrefix']?.toString(),
             'partner_details': {
                 'name': this.$('input[name="name"]').val(),
+                'street': this.$('input[name="street"]').val(),
+                'email': this.$('input[name="email"]').val(),
+                'phone': this.$('input[name="phone"]').val(),
+                'city': this.$('input[name="city"]').val(),
+                'zip': this.$('input[name="zip"]').val(),
+                'country_id': this.$('select[name="country_id"]').val(),
+                'state_id': this.$('select[name="state_id"]').val(),
             },
+            'donation_comment': this.$('#donation_comment').val(),
+            'donation_recipient_email': this.$('input[name="donation_recipient_email"]').val(),
         } : transactionRouteParams;
     },
 

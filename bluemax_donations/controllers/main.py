@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# Part of Odoo. See LICENSE file for full copyright and licensing details.
+import werkzeug
 
 from odoo import http, _
 from odoo.exceptions import ValidationError
@@ -10,6 +12,16 @@ from odoo.addons.payment.controllers import portal as payment_portal
 
 
 class PaymentPortal(payment_portal.PaymentPortal):
+
+    @http.route(['/donation/country_infos/<model("res.country"):country>'], type='json', auth="public", methods=['POST'], website=True)
+    def donation_country_infos(self, country, **kw):
+        return dict(
+            fields=country.get_address_fields(),
+            states=[(st.id, st.name, st.code) for st in country.get_website_donation_states()],
+            phone_code=country.phone_code,
+            zip_required=country.zip_required,
+            state_required=country.state_required,
+        )
 
     @http.route(
         '/website/payment/pay', type='http', methods=['GET'], auth='public', website=True, sitemap=False,
@@ -114,7 +126,8 @@ class PaymentPortal(payment_portal.PaymentPortal):
     def website_donation_pay(self, **kwargs):
         kwargs['is_website_donation'] = True
         kwargs['currency_id'] = self._cast_as_int(kwargs.get('currency_id')) or request.env.company.currency_id.id
-        kwargs['amount'] = self._cast_as_float(kwargs.get('amount')) or 5.0
+        first_donation_amount = request.env['donation.amount'].sudo().search([]).mapped('amount')
+        kwargs['amount'] = self._cast_as_float(kwargs.get('amount')) or float(first_donation_amount[0]) or 0.0
         kwargs['donation_options'] = kwargs.get('donation_options', json_safe.dumps(dict(customAmount="freeAmount")))
 
         if request.env.user._is_public():
@@ -132,13 +145,17 @@ class PaymentPortal(payment_portal.PaymentPortal):
             details = kwargs['partner_details']
             if not details.get('name'):
                 raise ValidationError(_('Name is required.'))
+            if not details.get('email'):
+                raise ValidationError(_('Email is required.'))
+            if not details.get('country_id'):
+                raise ValidationError(_('Country is required.'))
             partner_id = request.website.user_id.partner_id.id
             del kwargs['partner_details']
         else:
             partner_id = request.env.user.partner_id.id
 
         self._validate_transaction_kwargs(kwargs, additional_allowed_keys=(
-            'partner_details', 'reference_prefix'
+            'donation_comment', 'donation_recipient_email', 'partner_details', 'reference_prefix'
         ))
         if use_public_partner:
             kwargs['custom_create_values'] = {'tokenize': False}
@@ -149,7 +166,16 @@ class PaymentPortal(payment_portal.PaymentPortal):
         if use_public_partner:
             tx_sudo.update({
                 'partner_name': details['name'],
+                'partner_address': details['street'],
+                'partner_email': details['email'],
+                'partner_phone': details['phone'],
+                'partner_city': details['city'],
+                'partner_zip': details['zip'],
+                'partner_state_id': int(details['state_id']),
+                'partner_country_id': int(details['country_id']),
             })
+        elif not tx_sudo.partner_country_id:
+            tx_sudo.partner_country_id = int(kwargs['partner_details']['country_id'])
         # the user can change the donation amount on the payment page,
         # therefor we need to recompute the access_token
         access_token = payment_utils.generate_access_token(
@@ -158,9 +184,9 @@ class PaymentPortal(payment_portal.PaymentPortal):
         self._update_landing_route(tx_sudo, access_token)
 
         # Send a notification to warn that a donation has been made
-        # recipient_email = kwargs['donation_recipient_email']
-        # comment = kwargs['donation_comment']
-        # tx_sudo._send_donation_email(True, comment, recipient_email)
+        recipient_email = kwargs['donation_recipient_email']
+        comment = kwargs['donation_comment']
+        tx_sudo._send_website_donation_email(True, comment, recipient_email)
 
         return tx_sudo._get_processing_values()
 
@@ -176,9 +202,12 @@ class PaymentPortal(payment_portal.PaymentPortal):
             if logged_in:
                 partner_details = {
                     'name': partner_sudo.name,
+                    'email': partner_sudo.email,
+                    'country_id': partner_sudo.country_id.id,
                 }
 
             countries = request.env['res.country'].sudo().search([])
+            country_states = request.env['res.country.state'].sudo().search([])
 
             donation_options = json_safe.loads(donation_options) if donation_options else {}
             # donation_amounts = json_safe.loads(donation_options.get('donationAmounts', '[]'))
@@ -191,8 +220,32 @@ class PaymentPortal(payment_portal.PaymentPortal):
                 'transaction_route': '/website/donation/transaction/%s' % donation_options.get('minimumAmount', 0),
                 'partner_details': partner_details,
                 'error': {},
-                'countries': countries,
+                # 'countries': countries,
+                # 'country_states': country_states,
                 'donation_options': donation_options,
                 'donation_amounts': donation_amounts,
+            })
+        rendering_context.update(self._get_donation_country_related_render_values(kwargs, rendering_context))
+        return rendering_context
+
+    def _get_donation_country_related_render_values(self, kwargs, is_website_donation=False):
+        """ Provide the fields related to the country to render the website sale form """
+        rendering_context = {}
+        if is_website_donation:
+            user_sudo = request.env.user
+            def_country_id = user_sudo.partner_id.country_id
+            if user_sudo._is_public():
+                if request.geoip.country_code:
+                    def_country_id = request.env['res.country'].search([('code', '=', request.geoip.country_code)], limit=1)
+                else:
+                    def_country_id = request.website.user_id.sudo().country_id
+
+            country = 'country_id' in kwargs and kwargs['country_id'] != '' and request.env['res.country'].browse(int(kwargs['country_id']))
+            country = country and country.exists() or def_country_id
+
+            rendering_context.update({
+                'country': country,
+                'country_states': country.get_website_donation_states(),
+                'countries': country.get_website_donation_countries(),
             })
         return rendering_context

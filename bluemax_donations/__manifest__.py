@@ -14,6 +14,8 @@ Donation Payments
     """,
     'depends': ['website', 'account_payment', 'portal'],
     "data": [
+        'data/mail_templates.xml',
+        'data/mail_template_data.xml',
         'security/ir.model.access.csv',
         'data/donation_amount_data.xml',
         'views/donation_amount_views.xml',

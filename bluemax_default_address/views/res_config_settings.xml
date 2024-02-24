@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='active_user_setting']" position="after">
+                <div class="col-12 col-lg-6 o_setting_box" id="default_country" groups="base.group_system">
+                    <div class="o_setting_left_pane"><br /><br />
+                        <div style="margin-bottom:15px;">
+                            <field name="enable_default_Country" class="oe_switch_widget" />
+                        </div>
+                        <div style="margin-bottom:17.5px;">
+                            <field name="enable_default_state" class="oe_switch_widget" />
+                        </div>
+                        <div style="margin-bottom:17.5px;">
+                            <field name="enable_default_city" class="oe_switch_widget" />
+                        </div>
+                        <div style="margin-bottom:0px;">
+                            <field name="enable_default_zip" class="oe_switch_widget" />
+                        </div>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <div class="text-muted">
+                            Select the Default Country, State, and ZIP Code for New Customers
+                        </div><br />
+                        <label for="enable_default_Country" /><br />
+                        <field name="set_default_country" attrs="{'invisible': [('enable_default_Country', '=', False)]}" /><br />
+                        <label for="enable_default_state" /><br />
+                        <field name="set_default_state" attrs="{'invisible': [('enable_default_state', '=', False)]}" domain="[('country_id', '=', set_default_country)]" /><br />
+                        <label for="enable_default_city" /><br />
+                        <field name="set_default_city" attrs="{'invisible': [('enable_default_city', '=', False)]}" /><br />
+                        <label for="enable_default_zip" /><br />
+                        <field name="set_default_zip" attrs="{'invisible': [('enable_default_zip', '=', False)]}" />
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

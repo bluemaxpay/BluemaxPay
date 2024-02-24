@@ -44,22 +44,77 @@
 
     <template id="website_donation_information" name="Donation Information">
         <div class="row">
-            <div t-attf-class="mb-3 #{error.get('name') and 'o_has_error' or ''} col-lg-12 div_name #{not request.env.user._is_public() and 'd-none' or ''}">
+            <div t-attf-class="mb-3 #{error.get('name') and 'o_has_error' or ''} col-lg-12 div_name">
                 <label class="col-form-label fw-bold" for="name">Name
                     <span class="s_website_form_mark"> *</span>
                 </label>
-                <input t-att-readonly="'1' if 'name' in partner_details and partner_id else None" type="text" name="name" t-attf-class="form-control #{error.get('name') and 'is-invalid' or ''}" t-att-value="partner_details.get('name')" />
+                <input t-att-readonly="'1' if 'name' in partner_details and partner_id else None" type="text" name="name" t-attf-class="form-control #{error.get('name') and 'is-invalid' or ''}" t-att-value="partner_details.get('name')" required="required"/>
+            </div>
+            <div t-attf-class="#{error.get('street') and 'o_has_error'} div_street col-lg-12 mb-2 #{not request.env.user._is_public() and 'd-none' or ''}">
+                <label class="col-form-label" for="street">Street and Number</label>
+                <input type="text" name="street" t-attf-class="form-control #{error.get('street') and 'is-invalid' or ''}" t-att-value="" />
             </div>
             <div class="w-100"></div>
-            <h5 class="text-center">
+            <div t-attf-class="mb-3 #{error.get('email') and 'o_has_error' or ''} col-lg-6" id="div_email">
+                <label class="col-form-label fw-bold" for="email">Email
+                    <span class="s_website_form_mark"> *</span>
+                </label>
+                <input t-att-readonly="'1' if 'email' in partner_details and partner_id else None" type="email" name="email" t-attf-class="form-control #{error.get('email') and 'is-invalid' or ''}" t-att-value="partner_details.get('email')" required="required"/>
+            </div>
+            <div t-attf-class="#{error.get('phone') and 'o_has_error'} col-lg-6 mb-2 #{not request.env.user._is_public() and 'd-none' or ''}" id="div_phone">
+                <label class="col-form-label" for="phone">Phone</label>
+                <input type="tel" name="phone" t-attf-class="form-control #{error.get('phone') and 'is-invalid' or ''}" t-att-value="" />
+            </div>
+            <div t-attf-class="#{error.get('city') and 'o_has_error' or ''} div_city col-md-8 mb-2 #{not request.env.user._is_public() and 'd-none' or ''}">
+                <label class="col-form-label" for="city">City</label>
+                <input type="text" name="city" t-attf-class="form-control #{error.get('city') and 'is-invalid' or ''}" t-att-value="" />
+            </div>
+            <t t-set='zip_city' t-value='country and [x for x in country.get_donation_address_fields() if x in ["zip", "city"]] or ["city", "zip"]'/>
+            <t t-if="'zip' in zip_city and zip_city.index('zip') &lt; zip_city.index('city')">
+                <div t-attf-class="#{error.get('zip') and 'o_has_error'} div_zip col-md-4 mb-2 #{not request.env.user._is_public() and 'd-none' or ''}">
+                    <label class="col-form-label label-optional" for="zip">Zip Code</label>
+                    <input type="text" name="zip" t-attf-class="form-control #{error.get('zip') and 'is-invalid' or ''}" t-att-value="" />
+                </div>
+            </t>
+            <t t-if="'zip' in zip_city and zip_city.index('zip') &gt; zip_city.index('city')">
+                <div t-attf-class="#{error.get('zip') and 'o_has_error'} div_zip col-md-4 mb-2 #{not request.env.user._is_public() and 'd-none' or ''}">
+                    <label class="col-form-label label-optional" for="zip">Zip Code</label>
+                    <input type="text" name="zip" t-attf-class="form-control #{error.get('zip') and 'is-invalid' or ''}" t-att-value="" />
+                </div>
+            </t>
+            <t t-set="country_id" t-value="partner_details.get('country_id')"/>
+            <div t-attf-class="mb-3 #{error.get('country_id') and 'o_has_error' or ''} col-lg-6 div_country">
+                <label class="col-form-label fw-bold" for="country_id">Country
+                    <span class="s_website_form_mark"> *</span>
+                </label>
+                <select t-att-disabled="'1' if country_id and partner_id else None" id="country_id" name="country_id" t-attf-class="form-select #{error.get('country_id') and 'is-invalid' or ''}" required="required">
+                    <option value="">Country...</option>
+                    <t t-foreach="countries" t-as="c">
+                        <option t-att-value="c.id" t-att-selected="c.id == (country and country.id or -1)">
+                            <t t-esc="c.name" />
+                        </option>
+                    </t>
+                </select>
+            </div>
+            <t t-set="state_id" t-value="partner_details.get('state_id')"/>
+            <div t-attf-class="#{error.get('state_id') and 'o_has_error'} div_state col-lg-6 mb-2 #{not request.env.user._is_public() and 'd-none' or ''}" t-att-style="(not country or not country.state_ids) and 'display: none'">
+                <label class="col-form-label" for="state_id">State / Province</label>
+                <select name="state_id" t-attf-class="form-select #{error.get('state_id') and 'is-invalid' or ''}" data-init="1">
+                    <option value="">State / Province...</option>
+                    <t t-foreach="country_states" t-as="s">
+                        <option t-att-value="s.id" t-att-selected="s.id == (state_id and country or -1)">
+                            <t t-esc="s.name" />
+                        </option>
+                    </t>
+                </select>
+            </div>
+            <h5 class="text-left">
                 <b>
                     Donation Amount
                 </b>
             </h5>
-            <div class="w-100"></div>
             <div class="mb-3 col-lg-12 knk_donation_payment_form">
                 <div class="col-lg-12 card p-3">
-                    <!-- <label class="col-form-label fw-bold">Amount (<t t-out="currency.symbol"/>)</label> -->
                     <div class="custom-radio-container d-flex flex-wrap">
                         <t t-foreach="donation_amounts" t-as="donation_amount">
                             <div t-attf-class="form-check my-2 custom-radio #{'active' if donation_amount_index == 0 else ''}">
@@ -79,8 +134,15 @@
                         <t t-call="bluemax_donations.donation_input"/>
                     </div>
                 </div>
+                <div class="col-lg-12 px-0">
+                    <div class="form-check mt-3">
+                        <input class="form-check-input" type="checkbox" value="" id="donation_comment_checkbox"/>
+                        <label class="form-check-label" for="donation_comment_checkbox">Write us a comment</label>
+                    </div>
+                    <textarea class="form-control d-none mt-2" id="donation_comment" placeholder="Your comment"/>
+                </div>
             </div>
-            <!-- <input type="hidden" name="donation_recipient_email" t-att-value="donation_options.get('donationEmail')"/> -->
+            <input type="hidden" name="donation_recipient_email" t-att-value="donation_options.get('donationEmail')"/>
             <div class="w-100"></div>
         </div>
         <h3 class="o_page_header mt16 mb4">Payment Details</h3>
