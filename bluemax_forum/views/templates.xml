@@ -8,12 +8,57 @@
             <attribute name="t-att-data-forum_id">forum and forum.id</attribute>
         </xpath>
     </template>
+    <template id="search" name="Search Box" active="True">
+        <t t-call="website.website_search_box_input">
+            <t t-set="_form_classes" t-valuef="float-end"/>
+            <t t-set="search_type" t-valuef="forum_posts_only"/>
+            <t t-set="action" t-value="'/discussion/forum/all'"/>
+            <t t-set="display_image" t-valuef="false"/>
+            <t t-set="display_description" t-valuef="true"/>
+            <t t-set="display_extra_link" t-valuef="false"/>
+            <t t-set="display_detail" t-valuef="false"/>
+        </t>
+    </template>
 
     <template id="discussion_forum_all" name="Discussion Forum">
         <t t-call="website.layout">
             <t t-set="pageName" t-value="'website_discussion_forum'"/>
             <div id="wrap">
-                <div class="container">
+                <section class="oe_structure oe_empty" id="top_level_section">
+                    <table width="100%" border="0">
+                       <tbody>
+                          <tr>
+                             <td colspan="2" align="center">
+                                &amp;nbsp;
+                             </td>
+                          </tr>
+                          <tr>
+                             <td colspan="2">
+                                <div align="center"><a href="https://www.hoseheadforums.com"><img src="https://www.hoseheadforums.com/images/Main/hoseheadforumslogo.jpg" border="0" title="Hoseheadforums.com Powered by Ethanol"/></a>   </div>
+                             </td>
+                          </tr>
+                          <tr>
+                             <td colspan="2">
+                                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                   <tbody>
+                                      <tr>
+                                         <td class="size12" align="center">
+                                            <a href="/discussion/forum">Home</a> | <a href="/web/login?redirect=/discussion/forum">Register</a> | <a href="/contactus">Contact</a> | <a href="/faq">FAQ</a> 
+                                            <br/>
+                                            <a href="#">Blogs</a> | <a href="#">Photo Gallery</a> | <a href="#">Press Release</a> | <a href="#">Results</a> | 
+                                            <a href="#" target="new">HoseheadsClassifieds.com</a> 
+                                            <br/>
+                                            <br/>Welcome Guest. Already registered? <a href="/web/login?redirect=/discussion/forum">Please Login</a><br/><br/>
+                                         </td>
+                                      </tr>
+                                   </tbody>
+                                </table>
+                             </td>
+                          </tr>
+                       </tbody>
+                    </table>
+                </section>
+                <div class="container o_not_editable">
                     <table class="table forum_display_layout_cl table-striped table-bordered mt32" t-if="forums">
                         <thead>
                         <tr>
@@ -36,12 +81,19 @@
                         <h2 class="mt64 text-center">Not Found any Forums</h2>
                     </t>
                 </div>
+                <section class="oe_structure oe_empty" id="bottom_level_section"/>
             </div>
         </t>
     </template>
 
     <template id="discussion_forum_page" name="Forum">
         <t t-call="bluemax_forum.layout">
+            <t t-if="forum">
+                <t t-set="custom_head_code">
+                    <t t-raw="forum.google_ads_code"/>
+                </t>
+                <t t-set="head" t-value="(head or '') + custom_head_code"/>
+            </t>
             <t t-if="forum and not forum.active">
                 <t t-set="head">
                     <meta name="robots" content="noindex, nofollow" />
@@ -49,21 +101,80 @@
             </t>
             <t t-set="pageName" t-value="'website_discussion_forum_page'"/>
             <div id="wrap">
-                <div class="container">
-                    <nav id="o_wforum_nav" aria-label="breadcrumb" class="navbar d-flex gap-2  px-0">
-                        <div class="o_wforum_breadcrumb_root_list_or_edit d-flex">
-                            <div class="col-10 col-lg flex-grow-1 fs-5">
-                                <span class="fw-bold mb-0"><t t-esc="forum.name"/></span>
-                            </div>
+                <section class="oe_structure oe_empty" id="top_level_section">
+                    <div align="center" class="mt16">
+                        <table cellpadding="0" align="center" width="100%" border="0">
+                        <tbody>
+                            <tr>
+                                <td align="center">
+                                    <script>
+                                         (adsbygoogle = window.adsbygoogle || []).push({
+                                              google_ad_client: "ca-pub-3467790279955534",
+                                              enable_page_level_ads: true
+                                         });
+                                    </script>
+                                    <ins class="adsbygoogle"
+                                         style="display:inline-block;width:728px;height:90px"
+                                         data-ad-client="ca-pub-3467790279955534"
+                                         data-ad-slot="6328424390"></ins>
+                                    <script>
+                                    (adsbygoogle = window.adsbygoogle || []).push({});
+                                    </script>                                 
+                                </td>
+                            </tr>
+                        </tbody></table>        
+                        <img src="https://www.hoseheadforums.com/images/uploadedimages/Forums/hoseheads02x.gif" border="0"/>
+                    <br/>
+                    <br/>
+                    <font size="3">
+                        <a href="http://www.hoseheads.com">HoseHeads.com</a> | 
+                        <a href="http://www.hoseheadsclassifieds.com">HoseHeads Classifieds</a> | 
+                        <a href="http://www.racersauction.com">Racer's Auction</a>
+                    </font>
+                    </div>
+                </section>
+                <div class="container o_not_editable">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                       <tbody>
+                          <tr>
+                             <td class="size12" align="center">
+                                <t t-set="_forum_slug" t-value="slug(forum) if forum else ''"/>
+                                <t t-set="go_back_url" t-valuef="/discussion/forum/#{_forum_slug}"/>
+                                <a href="/discussion/forum">Home</a> | <a t-attf-href="/web/signup?redirect=#{go_back_url}">Register</a> | <a href="/contactus">Contact</a> | <a href="/faq">FAQ</a> | 
+                                <br/>
+                                <a href="#">Blogs</a> | <a href="#">Photo Gallery</a> | <a href="#">Press Release</a> | <a href="#">Results</a> | 
+                                <a href="#" target="new">HoseheadsClassifieds.com</a><br/>
+                                <br/>
+                                <br/>Welcome Guest. Already registered? <a t-attf-href="/web/login?redirect=#{go_back_url}">Please Login</a><br/><br/>
+                                &amp;nbsp;                      
+                             </td>
+                          </tr>
+                       </tbody>
+                    </table>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="2" t-if="forum">
+                           <tbody>
+                              <tr>
+                                 <td class="size12" align="center">
+                                    <h1 class="h4">
+                                       Forum: <span t-field="forum.name"/> (<a t-attf-href="/discussion/forum/#{slug(forum)}">go</a>)<br/>
+                                    </h1>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <nav id="o_wforum_nav" aria-label="breadcrumb" class="navbar d-flex gap-2 mt16 px-0">
+                        <div class="o_wforum_breadcrumb_root_list_or_edit d-flex" t-if="forum">
+                            <a href="/discussion/forum">Back to forum </a>
                         </div>
-                        <div class="d-flex justify-content-lg-end gap-2 flex-grow-1 flex-wrap flex-md-nowrap w-100 w-lg-auto mw-xl-50" t-if="not user._is_public()">
+                        <div class="d-flex justify-content-lg-end gap-2 flex-grow-1 flex-wrap flex-md-nowrap w-100 w-lg-auto mw-xl-100">
+                               <t t-call="bluemax_forum.search"/>
                                 <a role="button" type="button" class="o_wforum_ask_btn btn btn-primary w-100 w-md-auto " 
-                                    t-attf-href="/discussion/forum/#{slug(forum)}/ask">
+                                    t-attf-href="/discussion/forum/#{slug(forum)}/ask" t-if="forum">
                                     New Post
                                 </a>
                         </div>
                     </nav>
-                    <table class="table forum_display_layout_cl table-striped table-bordered mt32" t-if="question_ids">
+                    <table class="table forum_display_layout_cl table-striped table-bordered mt16" t-if="question_ids">
                         <thead>
                         <tr>
                           <th>Subject</th>
@@ -75,7 +186,7 @@
                         </thead>
                         <tbody>
                             <tr t-foreach="question_ids" t-as="question_id">
-                              <td><a t-attf-href="/discussion/forum/#{slug(forum)}/#{slug(question_id)}"><t t-esc="question_id.name"/></a></td>
+                              <td><a t-attf-href="/discussion/forum/#{slug(question_id.forum_id)}/#{slug(question_id)}"><t t-esc="question_id.name"/></a></td>
                               <td>
                                   <div class="d-flex flex-column small">
                                     <a href="#">
@@ -86,7 +197,7 @@
                                      <img t-att-src="website.get_user_rank_logs(question_id.create_uid.sudo())" style="max-height:22px;"/>
                                    </t>
                                    <t t-if="question_id.create_uid.sudo().has_group('bluemax_forum.group_moderator')">
-                                     <img src="/bluemax_forum/static/src/img/power.gif" style="max-height:22px;"/>
+                                      <b><i>Moderator</i></b>
                                    </t>
                               </td>
                               <td>
@@ -97,7 +208,7 @@
                                         at
                                         <span t-field="question_id.last_activity_date" t-options='{"format": "h:mm:ss a"}'></span>
                                         <a title="Click here to go to the last post 
-I agree. The article is about midget racing and how the numbers don't really pan out for it to work well. It goes " t-attf-href="/discussion/forum/#{slug(forum)}/#{slug(question_id)}/last/post">
+I agree. The article is about midget racing and how the numbers don't really pan out for it to work well. It goes " t-attf-href="/discussion/forum/#{slug(question_id.forum_id)}/#{slug(question_id)}/last/post">
 <img src="/bluemax_forum/static/src/img/lastPost.gif" border="0"/></a>
                                     </span>
                                   </div>
@@ -114,6 +225,7 @@ I agree. The article is about midget racing and how the numbers don't really pan
                         <t t-call="website.pager"/>
                     </div>
                 </div>
+                <section class="oe_structure oe_empty" id="bottom_level_section"/>
             </div>
         </t>
     </template>
@@ -121,7 +233,8 @@ I agree. The article is about midget racing and how the numbers don't really pan
     <template id="new_question" name="New Post">
         <t t-call="bluemax_forum.layout">
             <div id="wrap">
-                <div class="container">
+                <section class="oe_structure oe_empty" id="top_level_section"/>
+                <div class="container o_not_editable">
                     <div class="col-md-8 offset-md-2">
                         <nav id="o_wforum_nav" aria-label="breadcrumb" class="navbar d-flex gap-2 justify-content-center px-0">
                             <div class="o_wforum_breadcrumb_root_list_or_edit d-flex">
@@ -157,18 +270,94 @@ I agree. The article is about midget racing and how the numbers don't really pan
                         </form>
                     </div>
                 </div>
+                <section class="oe_structure oe_empty" id="bottom_level_section"/>
             </div>
         </t>
     </template>
+
     <template id="post_description_full" name="New Post">
         <t t-call="bluemax_forum.layout">
             <div id="wrap">
-                <div class="container">
+                <section class="oe_structure oe_empty" id="top_level_section">
+                    <div align="center" class="mt16">
+                        <table cellpadding="0" align="center" width="100%" border="0">
+                        <tbody>
+                            <tr>
+                                <td align="center">
+                                    <script>
+                                         (adsbygoogle = window.adsbygoogle || []).push({
+                                              google_ad_client: "ca-pub-3467790279955534",
+                                              enable_page_level_ads: true
+                                         });
+                                    </script>
+                                    <ins class="adsbygoogle"
+                                         style="display:inline-block;width:728px;height:90px"
+                                         data-ad-client="ca-pub-3467790279955534"
+                                         data-ad-slot="6328424390"></ins>
+                                    <script>
+                                    (adsbygoogle = window.adsbygoogle || []).push({});
+                                    </script>                                 
+                                </td>
+                            </tr>
+                        </tbody></table>        
+                        <img src="https://www.hoseheadforums.com/images/uploadedimages/Forums/hoseheads02x.gif" border="0"/>
+                    <br/>
+                    <br/>
+                    <font size="3">
+                        <a href="http://www.hoseheads.com">HoseHeads.com</a> | 
+                        <a href="http://www.hoseheadsclassifieds.com">HoseHeads Classifieds</a> | 
+                        <a href="http://www.racersauction.com">Racer's Auction</a>
+                    </font>
+                    </div>
+                </section>
+                <div class="container o_not_editable">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                       <tbody>
+                          <tr>
+                             <td class="size12" align="center">
+                                <t t-set="_forum_slug" t-value="slug(forum) if forum else 'all'"/>
+                                <t t-set="_openpost_slug" t-value="slug(question) if question else ''"/>
+                                <t t-set="go_back_url" t-valuef="/discussion/forum/#{_forum_slug}/#{_openpost_slug}"/>
+                                <a href="/discussion/forum">Home</a> | <a t-attf-href="/web/signup?redirect=#{go_back_url}">Register</a> | <a href="/contactus">Contact</a> | <a href="/faq">FAQ</a> | 
+                                <br/>
+                                <a href="#">Blogs</a> | <a href="#">Photo Gallery</a> | <a href="#">Press Release</a> | <a href="#">Results</a> | 
+                                <a href="#" target="new">HoseheadsClassifieds.com</a><br/>
+                                <br/>
+                                <br/>Welcome Guest. Already registered? <a t-attf-href="/web/login?redirect=#{go_back_url}">Please Login</a><br/><br/>
+                                &amp;nbsp;                      
+                             </td>
+                          </tr>
+                       </tbody>
+                    </table>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="2" t-if="forum">
+                           <tbody>
+                              <tr>
+                                 <td class="size12" align="center">
+                                    <h1 class="h4">
+                                       Forum: <span t-field="forum.name"/> (<a t-attf-href="/discussion/forum/#{slug(forum)}">go</a>)<br/>
+                                    </h1>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <div class="row">
                         <div class="col-md-12">
-                            <table class="table forum_display_layout_cl table-striped table-bordered mt32" style="border: 2px solid blue;">
+                            <table class="table forum_display_layout_cl table-striped table-bordered border-primary mt32" style="border: 2px solid;">
                                 <tbody>
-                                    <tr bgcolor="blue">
+                                    <tr>
+                                        <td colspan="5" class="bg-primary">
+                                            <a t-attf-href="/discussion/forum/#{slug(forum)}" style="vertical-align: middle;align-items: center;line-height: 23px;color: white;" title="Back">
+                                                <i class="fa fa-chevron-left"/>
+                                            </a>
+                                            <t t-call="bluemax_forum.search"/>
+                                        </td>
+                                    </tr>
+                                    <tr bgcolor="#FFFFFF">
+                                        <td colspan="5">
+                                        
+                                        </td>
+                                    </tr>
+                                    <tr class="bg-primary">
                                         <td valign="middle" style="color:#FFFFFF" colspan="3">
                                             <b>
                                                 Topic: <t t-esc="question.name"/>
@@ -184,7 +373,7 @@ I agree. The article is about midget racing and how the numbers don't really pan
                                             </b>
                                         </td>
                                     </tr>
-                                    <tr valign="top" bgcolor="#cccc99" t-if="page == 1" t-attf-id="post_message_#{question.id}">
+                                    <tr valign="top" class="bg-secondary" t-if="page == 1" t-attf-id="post_message_#{question.id}">
                                         <td>
                                             <table>
                                                 <tbody>
@@ -280,8 +469,8 @@ I agree. The article is about midget racing and how the numbers don't really pan
                                           </table>
                                        </td>
                                     </tr>
-                                    <tr valign="top" bgcolor="#cccc99" t-if="page == 1">
-                                       <td colspan="3" style="border-bottom:8px solid blue;">
+                                    <tr valign="top" class="bg-secondary" t-if="page == 1">
+                                       <td colspan="3" class="border-primary" style="border-bottom:8px solid;">
                                           <div class="main_thread_containt" t-attf-qpost_id="question_post_#{question.id}">
                                               <t t-out="question.content"/>
                                           </div>
@@ -370,7 +559,7 @@ I agree. The article is about midget racing and how the numbers don't really pan
                                                </td>
                                             </tr>
                                             <tr valign="middle" bgcolor="#F4F4FF">
-                                               <td colspan="3" style="border-bottom:8px solid blue;">
+                                               <td colspan="3" class="border-primary" style="border-bottom:8px solid;">
                                                      <t t-if="child_post.reply_parent_id">
                                                           Reply to:<br/>
                                                           <table border="1" bgcolor="#FFFF66">
@@ -406,13 +595,14 @@ I agree. The article is about midget racing and how the numbers don't really pan
 
                             <br/>
                             <button class="btn btn-primary reply_post_msg" t-att-data-partner_id="question.create_uid.sudo().partner_id.id" t-att-data-user_id="question.create_uid.sudo().id" t-att-data-question_post_id="question.id" t-if="not user._is_public() and question.state != 'close'">
-                               Post Message   
+                               Post Reply   
                             </button>
                             <br/>
                             <br/>
                         </div>
                     </div>
                 </div>
+                <section class="oe_structure oe_empty" id="top_level_section"/>
             </div>
         </t>
     </template>
@@ -433,7 +623,7 @@ I agree. The article is about midget racing and how the numbers don't really pan
                 <textarea name="content" t-attf-id="content-#{str(question.id)}" class="form-control o_wysiwyg_loader" required="required" minlength="50"/>
             </div>
             <div>
-                <button type="submit" t-attf-class="o_wforum_submit_post btn btn-primary my-3">Post Answer</button>
+                <button type="submit" t-attf-class="o_wforum_submit_post btn btn-primary my-3">Post Reply</button>
                 <a href="#"
                    class="o_wforum_discard_btn btn btn-link"
                 >Discard</a>
@@ -457,7 +647,7 @@ I agree. The article is about midget racing and how the numbers don't really pan
                 <textarea name="content" t-attf-id="content-#{str(question.id)}" class="form-control o_wysiwyg_loader" required="required" minlength="50"/>
             </div>
             <div>
-                <button type="submit" t-attf-class="o_wforum_submit_post btn btn-primary my-3">Post Answer</button>
+                <button type="submit" t-attf-class="o_wforum_submit_post btn btn-primary my-3">Submit Reply</button>
                 <a href="#"
                    class="o_wforum_discard_btn btn btn-link"
                 >Discard</a>

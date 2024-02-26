@@ -158,6 +158,9 @@
                                 <field name="name" placeholder="e.g. Help"/>
                             </h1>
                         </div>
+                        <group>
+                            <field name="google_ads_code" colspan="4" rowspan="7"/>
+                        </group>
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" groups="base.group_user"/>

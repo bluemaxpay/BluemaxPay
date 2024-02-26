@@ -78,7 +78,9 @@ class WebsiteDiscussionForum(http.Controller):
             'my': my,
         }
 
-    @http.route(['/discussion/forum/<model("discussion.forum"):forum>',
+    @http.route(['/discussion/forum/all',
+                 '/discussion/forum/all/page/<int:page>',
+                 '/discussion/forum/<model("discussion.forum"):forum>',
                  '/discussion/forum/<model("discussion.forum"):forum>/page/<int:page>',
                  ], type='http', auth="public", website=True, sitemap=sitemap_forum)
     def questions(self, forum=None, tag=None, page=1, filters='all', my=None, sorting=None, search='', create_uid=False, include_answers=False, **post):
@@ -115,7 +117,7 @@ class WebsiteDiscussionForum(http.Controller):
         question_ids = question_ids[(page - 1) * self._post_per_page:page * self._post_per_page]
 
         if not forum:
-            url = '/discussion/forum'
+            url = '/discussion/forum/all'
         else:
             url = f"/discussion/forum/{slug(forum)}"
 
