@@ -4,4 +4,3 @@
 from . import donation_amount
 from . import payment_transaction
 from . import res_country
-from . import website

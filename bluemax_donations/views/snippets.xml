@@ -3,23 +3,12 @@
     <template id="donation_snippet" name="Donation Button">
         <div class="s_donation knk_donation"
                 data-name="Donation Button"
-                data-donation-email="info@yourcompany.example.com"
                 data-custom-amount="freeAmount"
                 t-att-data-display-options="display_options"
-                data-prefilled-options="false"
-                data-descriptions="false"
-                data-donation-amounts='["10", "25", "50", "100"]'
-                data-minimum-amount="5"
-                data-maximum-amount="100"
-                data-slider-step="5">
+                data-prefilled-options="true"
+                data-descriptions="true">
             <form class="s_donation_form" action="/website/donation/pay" method="post" enctype="multipart/form-data">
-                <span id="s_donation_description_inputs">
-                    <input type="hidden" class="o_translatable_input_hidden d-block mb-1 w-100" name="donation_descriptions" value="A year of cultural awakening."/>
-                    <input type="hidden" class="o_translatable_input_hidden d-block mb-1 w-100" name="donation_descriptions" value="Caring for a baby for 1 month."/>
-                    <input type="hidden" class="o_translatable_input_hidden d-block mb-1 w-100" name="donation_descriptions" value="One year in elementary school."/>
-                    <input type="hidden" class="o_translatable_input_hidden d-block mb-1 w-100" name="donation_descriptions" value="One year in high school."/>
-                </span>
-                <a href="#" type="button" class="s_donation_donate_btn btn btn-primary btn-lg mb-2">Donate</a>
+                <a href="#" type="button" class="knk_donation_donate_btn btn btn-primary btn-lg mb-2">Donate</a>
             </form>
         </div>
     </template>
@@ -30,7 +19,7 @@
                     <i class="fa fa-th-large"/> Donation
                 </div>
                 <div class="o_panel_body">
-                    <t t-snippet="bluemax_donations.donation_snippet" string="Donation Button" t-thumbnail="/bluemax_donations/static/src/img/donation_thumbanil.png" t-forbid-sanitize="form"/>
+                    <t t-snippet="bluemax_donations.donation_snippet" t-thumbnail="/bluemax_donations/static/src/img/donation_thumbanil.png"/>
                 </div>
             </div>
         </xpath>

@@ -145,15 +145,15 @@ class PaymentPortal(payment_portal.PaymentPortal):
             details = kwargs['partner_details']
             if not details.get('name'):
                 raise ValidationError(_('Name is required.'))
-            # if not details.get('email'):
-            #     raise ValidationError(_('Email is required.'))
-            # if not details.get('country_id'):
-            #     raise ValidationError(_('Country is required.'))
+            if not details.get('email'):
+                raise ValidationError(_('Email is required.'))
+            if not details.get('country_id'):
+                raise ValidationError(_('Country is required.'))
             partner_id = request.website.user_id.partner_id.id
             del kwargs['partner_details']
         else:
             partner_id = request.env.user.partner_id.id
-        # donation_recipient_email
+
         self._validate_transaction_kwargs(kwargs, additional_allowed_keys=(
             'donation_comment', 'donation_recipient_email', 'partner_details', 'reference_prefix'
         ))
@@ -164,30 +164,11 @@ class PaymentPortal(payment_portal.PaymentPortal):
         )
         tx_sudo.donation_payment = True
         if use_public_partner:
-            name = details.get('name')
-            street = details.get('street')
-            email = details.get('email')
-            city = details.get('city')
-            zip_code = details.get('zip')
-            country_id = int(details.get('country_id'))
-            state_id = int(details.get('state_id'))
-            partner_obj = request.env['res.partner']
-            partner_vals = {
-                'name': name,
-                'street': street,
-                'email': email,
-                'city': city,
-                'zip': zip_code,
-                'country_id': country_id,
-                'state_id': state_id
-            }
-            partner_id = partner_obj.sudo().create(partner_vals)
             tx_sudo.update({
-                'partner_id': partner_id.id,
                 'partner_name': details['name'],
                 'partner_address': details['street'],
                 'partner_email': details['email'],
-                # 'partner_phone': details['phone'],
+                'partner_phone': details['phone'],
                 'partner_city': details['city'],
                 'partner_zip': details['zip'],
                 'partner_state_id': int(details['state_id']),
@@ -222,7 +203,7 @@ class PaymentPortal(payment_portal.PaymentPortal):
                 partner_details = {
                     'name': partner_sudo.name,
                     'email': partner_sudo.email,
-                    # 'country_id': partner_sudo.country_id.id,
+                    'country_id': partner_sudo.country_id.id,
                 }
 
             countries = request.env['res.country'].sudo().search([])
@@ -244,7 +225,7 @@ class PaymentPortal(payment_portal.PaymentPortal):
                 'donation_options': donation_options,
                 'donation_amounts': donation_amounts,
             })
-        # rendering_context.update(self._get_donation_country_related_render_values(kwargs, rendering_context))
+        rendering_context.update(self._get_donation_country_related_render_values(kwargs, rendering_context))
         return rendering_context
 
     def _get_donation_country_related_render_values(self, kwargs, is_website_donation=False):

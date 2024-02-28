@@ -14,46 +14,14 @@ PaymentForm.include({
         'change select[name="country_id"]': '_onChangeDonationCountry',
     }),
 
-    init() {
-        this._super(...arguments);
-        this.rpc = this.bindService("rpc");
-    },
-
     // #=== WIDGET LIFECYCLE ===#
 
     /**
      * @override
      */
     async start() {
-        this._displayCurrencies();
         Component.env.bus.addEventListener('update_shipping_cost', (ev) => this._updateShippingCost(ev.detail));
         return await this._super.apply(this, arguments);
-    },
-    /**
-     * @private
-     */
-    _displayCurrencies() {
-        return this.rpc('/website/get_current_currency').then((result) => {
-            this.currency = result;
-            this.$('.s_donation_currency').remove();
-
-            const $buttons = $('.knk_donation_btn');
-
-            $buttons.each((index, button) => {
-                if ($(button).find('.s_donation_currency').length === 0) {
-                    const $currencySymbol = $('<span/>', {
-                        text: result.symbol,
-                        class: 's_donation_currency',
-                    });
-
-                    if (result.position === "before") {
-                        $(button).prepend($currencySymbol);
-                    } else {
-                        $(button).append($currencySymbol);
-                    }
-                }
-            });
-        });
     },
 
     _onClickCustomRadio: function (ev) {
@@ -158,13 +126,13 @@ PaymentForm.include({
     async _initiatePaymentFlow(providerCode, paymentOptionId, paymentMethodCode, flow) {
         if ($('.knk_donation_payment_form').length) {
             const errorFields = {};
-            // if (!this.$('input[name="email"]')[0].checkValidity()) {
-            //     errorFields['email'] = _t("Email is invalid");
-            // }
+            if (!this.$('input[name="email"]')[0].checkValidity()) {
+                errorFields['email'] = _t("Email is invalid");
+            }
             const mandatoryFields = {
                 'name': _t('Name'),
-                // 'email': _t('Email'),
-                // 'country_id': _t('Country'),
+                'email': _t('Email'),
+                'country_id': _t('Country'),
             };
             for (const id in mandatoryFields) {
                 const $field = this.$('input[name="' + id + '"],select[name="' + id + '"]');
@@ -208,7 +176,7 @@ PaymentForm.include({
                 'name': this.$('input[name="name"]').val(),
                 'street': this.$('input[name="street"]').val(),
                 'email': this.$('input[name="email"]').val(),
-                // 'phone': this.$('input[name="phone"]').val(),
+                'phone': this.$('input[name="phone"]').val(),
                 'city': this.$('input[name="city"]').val(),
                 'zip': this.$('input[name="zip"]').val(),
                 'country_id': this.$('select[name="country_id"]').val(),

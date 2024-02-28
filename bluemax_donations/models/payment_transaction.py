@@ -3,7 +3,6 @@
 
 from markupsafe import Markup
 from odoo import fields, models, _
-from odoo.http import request
 
 
 class PaymentTransaction(models.Model):
@@ -27,7 +26,7 @@ class PaymentTransaction(models.Model):
 
     def _send_website_donation_email(self, is_internal_notification=False, comment=None, recipient_email=None):
         self.ensure_one()
-        if is_internal_notification and request.website.send_email_from_donation_pay:
+        if is_internal_notification or self.state == 'done':
             subject = _('A donation has been made on your website') if is_internal_notification else _('Donation confirmation')
             body = self.env['ir.qweb']._render('bluemax_donations.website_donation_mail_body', {
                 'is_internal_notification': is_internal_notification,
@@ -38,7 +37,7 @@ class PaymentTransaction(models.Model):
                 self.id,
                 email_layout_xmlid="mail.mail_notification_light",
                 email_values={
-                    'email_to': recipient_email if is_internal_notification and recipient_email else self.partner_email,
+                    'email_to': recipient_email if is_internal_notification else self.partner_email,
                     'email_from': self.company_id.email_formatted,
                     'author_id': self.partner_id.id,
                     'subject': subject,
