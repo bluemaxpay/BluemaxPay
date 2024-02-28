@@ -34,6 +34,13 @@ class DiscussionForum(models.Model):
     total_posts = fields.Integer('# Posts', compute='_compute_forum_statistics')
     total_views = fields.Integer('# Views', compute='_compute_forum_statistics')
     google_ads_code = fields.Text(string="Google Auto Ads Code")
+    website_description = fields.Html(
+        string="Description for the website",
+        translate=html_translate,
+        sanitize_overridable=True,
+        sanitize_attributes=False,
+        sanitize_form=False,
+    )
 
     @api.depends('post_ids.state', 'post_ids.views', 'post_ids.child_count')
     def _compute_forum_statistics(self):

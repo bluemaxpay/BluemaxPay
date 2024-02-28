@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_knk" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.website</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="website.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='website_info_settings']//setting[2]" position="after">
+                <setting string="Send Email from donation pay" id="website_send_email_from_donation_pay">
+                    <field name="send_email_from_donation_pay"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>

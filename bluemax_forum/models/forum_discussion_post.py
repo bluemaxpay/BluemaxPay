@@ -113,6 +113,9 @@ class Post(models.Model):
         domain = expression.AND([domain, [('state', '=', 'active')]])
         domain = expression.AND([domain, [('parent_id', '=', False)]])
         forum = options.get('forum')
+        create_uid = options.get('create_uid', False) 
+        if create_uid:
+            domain = expression.AND([domain, [('create_uid', '=', create_uid)]])
         if forum:
             domain = expression.AND([domain, [('forum_id', '=', unslug(forum)[1])]])
         user = self.env.user
@@ -139,12 +142,33 @@ class Post(models.Model):
             'order': order,
         }
 
+    def post_notification(self):
+        for post in self:
+            forum_partners = post.forum_id.mapped('message_partner_ids')
+
+            if post.state == 'active' and post.parent_id:
+                post.parent_id.message_post_with_source(
+                    'bluemax_forum.forum_post_template_new_answer',
+                    subject=_('Re: %s', post.parent_id.name),
+                    partner_ids=forum_partners.ids,
+                    subtype_xmlid='bluemax_forum.mt_answer_new',
+                )
+            elif post.state == 'active' and not post.parent_id:
+                post.message_post_with_source(
+                    'bluemax_forum.forum_post_template_new_question',
+                    subject=post.name,
+                    partner_ids=forum_partners.ids,
+                    subtype_xmlid='bluemax_forum.mt_question_new',
+                )
+        return True
+
     @api.model_create_multi
     def create(self, vals_list):
         posts = super(Post, self).create(vals_list)
         for post in posts:
             if post.parent_id and (post.parent_id.state == 'close' or post.parent_id.active is False):
                 raise UserError(_('Posting Message on a [Deleted] or [Closed] post is not possible.'))
+        posts.with_user(self.env.ref('base.user_admin')).post_notification()
         return posts
 
     def write(self, vals):
@@ -157,6 +181,15 @@ class Post(models.Model):
         if not self.user_has_groups('bluemax_forum.group_moderator') and self.create_uid.id != self.env.user.id:
             raise AccessError(_('Only edit own post only..'))
         res = super(Post, self).write(vals)
+        if 'content' in vals or 'name' in vals:
+            for post in self:
+                if post.parent_id:
+                    body, subtype_xmlid = _('Reply Post Edited'), 'bluemax_forum.mt_answer_edit'
+                    obj_id = post.parent_id
+                else:
+                    body, subtype_xmlid = _('Post Edited'), 'bluemax_forum.mt_question_edit'
+                    obj_id = post
+                obj_id.message_post(body=body, subtype_xmlid=subtype_xmlid)
         return res
 
     def unlink(self):

@@ -12,7 +12,7 @@ Donation Payments
 => Donate money from website
 => Donation from various payment acquirers supported
     """,
-    'depends': ['website', 'account_payment', 'portal'],
+    'depends': ['website', 'account_payment', 'portal', 'payment_bluemaxpay'],
     "data": [
         'data/mail_templates.xml',
         'data/mail_template_data.xml',
@@ -21,10 +21,11 @@ Donation Payments
         'views/donation_amount_views.xml',
         'views/donation_amount_templates.xml',
         'views/snippets.xml',
+        'views/website_view.xml',
     ],
     'assets': {
         'web.assets_frontend': [
-            'bluemax_donations/static/src/js/website_donation.js',
+            # 'bluemax_donations/static/src/js/website_donation.js',
             'bluemax_donations/static/src/js/payment_form.js',
             'bluemax_donations/static/src/js/website_payment_donation.js',
             'bluemax_donations/static/src/css/donation_payment.css',

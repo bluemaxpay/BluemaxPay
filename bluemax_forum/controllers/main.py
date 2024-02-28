@@ -14,6 +14,45 @@ class WebsiteDiscussionForum(http.Controller):
     _post_per_page = 10
     _user_per_page = 30
 
+    @http.route(['/forum/user/info/<int:user_id>'], type='http', auth="public", website=True, sitemap=True)
+    def forumUserInfo(self, user_id=None, **kwargs):
+        profile_user_id = None
+        try:
+            profile_user_id = request.env['res.users'].sudo().browse(int(user_id))
+        except:
+            return request.redirect('/discussion/forum')
+
+        return request.render("bluemax_forum.forum_user_profile_info", {
+            'profile_user_id': profile_user_id
+            })
+
+    @http.route(['/forum/send/mail/to/user'], type='http', methods=['POST'], auth="public", website=True, sitemap=True)
+    def forum_user_contact(self, **kwargs):
+        partner = request.env.user.partner_id
+        send_user_id = kwargs.get('send_user_id', False)
+        send_user_obj = request.env['res.users'].sudo().browse(int(send_user_id))
+        body = kwargs.get('content', '')
+        subject = 'New Message from %s' %(partner.name)
+        try:
+            partner.message_post(body=body, subject=subject, message_type="notification", subtype_xmlid="mail.mt_comment", partner_ids=send_user_obj.partner_id.ids )
+            return request.redirect('/contactus-thank-you')
+        except:
+            return request.redirect('/discussion/forum')
+
+
+    
+    @http.route(['/forum/user/send/mail/<int:user_id>'], type='http', auth="user", website=True, sitemap=True)
+    def forumUserSendMail(self, user_id=None, **kwargs):
+        profile_user_mail = None
+        try:
+            profile_user_mail = request.env['res.users'].sudo().browse(int(user_id))
+        except:
+            return request.redirect('/discussion/forum')
+
+        return request.render("bluemax_forum.send_mail_to_user", {
+            'profile_user_mail': profile_user_mail
+            })
+
     @http.route(['/discussion/forum'], type='http', auth="public", website=True, sitemap=True)
     def forum(self, **kwargs):
         domain = request.website.website_domain()
@@ -121,9 +160,15 @@ class WebsiteDiscussionForum(http.Controller):
         else:
             url = f"/discussion/forum/{slug(forum)}"
 
+        url_args = {}
+
+        for name, value in zip(['search', 'create_uid'], [search, create_uid]):
+            if value:
+                url_args[name] = value
+
         pager = tools.lazy(lambda: request.website.pager(
             url=url, total=question_count, page=page, step=self._post_per_page,
-            scope=self._post_per_page, url_args={}))
+            scope=self._post_per_page, url_args=url_args))
 
         values = self._prepare_user_values(forum=forum, searches=post)
         values.update({

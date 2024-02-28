@@ -28,7 +28,6 @@ publicWidget.registry.websiteDiscussionForum = publicWidget.Widget.extend({
         var self = this;
 
         this.lastsearch = [];
-
         // float-start class messes up the post layout OPW 769721
         $('span[data-oe-model="forum.post"][data-oe-field="content"]').find('img.float-start').removeClass('float-start');
 

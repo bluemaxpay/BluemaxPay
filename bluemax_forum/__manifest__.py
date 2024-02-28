@@ -10,6 +10,7 @@
     'depends': ['auth_signup', 'website_mail'],
     'data': [
         'data/data.xml',
+        'data/mail_templates.xml',
         'security/ir.model.access.csv',
         'security/security.xml',
         'views/views.xml',
