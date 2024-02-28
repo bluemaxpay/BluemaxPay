@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<odoo>
+    <data>
+        <menuitem
+        name="Forum"
+        id="menu_website_discussion_forum_global"
+        parent="website.menu_website_global_configuration"
+        sequence="170"
+        groups="website.group_website_designer"/>
+
+        <menuitem
+        id="menu_forum__discussion_global"
+        parent="menu_website_discussion_forum_global"
+        name="Forums"
+        action="discussion_forum_action"
+        sequence="10"/>
+
+        <menuitem
+        id="menu_discussion_forum_post_pages"
+        parent="menu_website_discussion_forum_global"
+        sequence="80"
+        name="Forum Posts"
+        action="discussion_forum_post_action"/>
+
+        <menuitem
+        id="menu_rank_type_global"
+        parent="menu_website_discussion_forum_global"
+        name="Rank Type"
+        action="action_rank_type_tree"
+        sequence="15"/>
+
+    </data>
+</odoo>

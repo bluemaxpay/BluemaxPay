@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+bluemax_forum.access_discussion_forum_public,access_discussion_forum,bluemax_forum.model_discussion_forum,base.group_public,1,0,0,0
+bluemax_forum.access_discussion_forum_portal,access_discussion_forum,bluemax_forum.model_discussion_forum,base.group_portal,1,0,0,0
+bluemax_forum.access_discussion_forum_user,access_discussion_forum,bluemax_forum.model_discussion_forum,base.group_user,1,0,0,0
+bluemax_forum.access_discussion_forum_manager,access_discussion_forum,bluemax_forum.model_discussion_forum,base.group_erp_manager,1,1,1,1
+bluemax_forum.access_discussion_forum_post_public,access_discussion_forum_post,bluemax_forum.model_discussion_forum_post,base.group_public,1,0,0,0
+bluemax_forum.access_discussion_forum_post_portal,access_discussion_forum_post,bluemax_forum.model_discussion_forum_post,base.group_portal,1,1,1,1
+bluemax_forum.access_discussion_forum_post_user,access_discussion_forum_post,bluemax_forum.model_discussion_forum_post,base.group_user,1,1,1,1
+bluemax_forum.access_rank_type_public,access_rank_type,bluemax_forum.model_rank_type,base.group_public,1,0,0,0
+bluemax_forum.access_rank_type_portal,access_rank_type,bluemax_forum.model_rank_type,base.group_portal,1,0,0,0
+bluemax_forum.access_rank_type_user,access_rank_type,bluemax_forum.model_rank_type,base.group_user,1,1,1,1
+bluemax_forum.access_rank_type_manager,access_rank_type,bluemax_forum.model_rank_type,base.group_erp_manager,1,1,1,1

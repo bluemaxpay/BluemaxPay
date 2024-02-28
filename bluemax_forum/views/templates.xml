@@ -1,0 +1,809 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="layout" inherit_id="website.layout" name="Forum Layout" primary="True">
+        <xpath expr="//div[@id='wrapwrap']" position="before">
+            <t t-set="pageName" t-value="'website_discussion_forum'"/>
+        </xpath>
+        <xpath expr="//div[@id='wrapwrap']" position="attributes">
+            <attribute name="t-att-data-forum_id">forum and forum.id</attribute>
+        </xpath>
+    </template>
+    <template id="search" name="Search Box" active="True">
+        <t t-call="website.website_search_box_input">
+            <t t-set="_form_classes" t-valuef="float-end"/>
+            <t t-set="search_type" t-valuef="forum_posts_only"/>
+            <t t-set="action" t-value="'/discussion/forum/all'"/>
+            <t t-set="display_image" t-valuef="false"/>
+            <t t-set="display_description" t-valuef="true"/>
+            <t t-set="display_extra_link" t-valuef="false"/>
+            <t t-set="display_detail" t-valuef="false"/>
+        </t>
+    </template>
+
+    <template id="follow">
+        <div t-attf-class="js_follow #{div_class}"
+            t-att-data-id="object.id"
+            t-att-data-object="object._name"
+            t-att-data-follow="object.id and object.message_is_follower and 'on' or 'off'"
+            t-att-data-unsubscribe="'unsubscribe' if 'unsubscribe' in request.params else None">
+            <div t-if="icons_design and not request.env.user.has_group('base.group_public')" class="js_follow_icons_container">
+                <button t-attf-class="btn js_unfollow_btn #{btn_classes}" title="Unsubscribe">
+                    Unsubscribe
+                </button>
+                <button t-attf-class="btn js_follow_btn #{btn_classes}" title="Subscribe">
+                    Subscribe
+                </button>
+            </div>
+            <div t-if="icons_design and request.env.user.has_group('base.group_public')" class="js_follow_icons_container">
+                <a t-attf-class="btn #{btn_classes}" t-attf-href="/web/login?redirect=/discussion/forum/#{slug(object)}" title="Subscribe">
+                    Subscribe
+                </a>
+            </div>
+        </div>
+    </template>
+
+    <template id="discussion_forum_all" name="Discussion Forum">
+        <t t-call="website.layout">
+            <t t-set="pageName" t-value="'website_discussion_forum'"/>
+            <div id="wrap">
+                <section class="oe_structure oe_empty" id="top_level_section">
+                    <table width="100%" border="0">
+                       <tbody>
+                          <tr>
+                             <td colspan="2" align="center">
+                                &amp;nbsp;
+                             </td>
+                          </tr>
+                          <tr>
+                             <td colspan="2">
+                                <div align="center">
+                                    <a href="/">
+                                        <img src="/bluemax_forum/static/src/img/placeholdermain.png" border="0" title="" class="mw-100"/>
+                                    </a>  
+                                </div>
+                             </td>
+                          </tr>
+                          <tr>
+                             <td colspan="2">
+                                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                   <tbody>
+                                      <tr>
+                                         <td class="size12" align="center">
+                                         </td>
+                                      </tr>
+                                   </tbody>
+                                </table>
+                             </td>
+                          </tr>
+                       </tbody>
+                    </table>
+                </section>
+                <div class="container o_not_editable">
+                    <table class="table forum_display_layout_cl table-striped table-bordered mt32" t-if="forums">
+                        <thead>
+                        <tr>
+                          <th>Forum Name</th>
+                          <th>Posts</th>
+                          <th>Reply</th>
+                          <th>Post views</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="forums" t-as="forum">
+                              <td><a t-attf-href="/discussion/forum/#{slug(forum)}"><t t-esc="forum.name"/></a></td>
+                              <td><t t-esc="forum.post_count"/></td>
+                              <td><t t-esc="forum.post_reply_counts"/></td>
+                              <td><t t-esc="forum.post_total_views_counts"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <t t-if="not forums">
+                        <h2 class="mt64 text-center">Not Found any Forums</h2>
+                    </t>
+                </div>
+                <section class="oe_structure oe_empty" id="bottom_level_section"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="discussion_forum_page" name="Forum">
+        <t t-call="bluemax_forum.layout">
+            <t t-if="forum">
+                <t t-set="custom_head_code">
+                    <t t-raw="forum.google_ads_code"/>
+                </t>
+                <t t-set="head" t-value="(head or '') + custom_head_code"/>
+            </t>
+            <t t-if="forum and not forum.active">
+                <t t-set="head">
+                    <meta name="robots" content="noindex, nofollow" />
+                </t>
+            </t>
+            <t t-set="pageName" t-value="'website_discussion_forum_page'"/>
+            <div id="wrap">
+                <section class="oe_structure oe_empty" id="top_level_section">
+                </section>
+                <div itemprop="description" t-field="forum.website_description" class="oe_structure oe_empty mt16" id="product_full_description" t-if="forum">
+                    <section>
+                        <div align="center" class="mt16">       
+                            <img src="/bluemax_forum/static/src/img/placeholder.png" class="mw-100" border="0"/>
+                        </div>
+                        <br/>
+                        <br/>
+                    </section>
+                </div>
+                <div class="container o_not_editable">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="2" t-if="forum">
+                           <tbody>
+                              <tr>
+                                 <td class="size12" align="center">
+                                    <h1 class="h4">
+                                       Forum: <span t-field="forum.name"/> (<a t-attf-href="/discussion/forum/#{slug(forum)}">go</a>)<br/>
+                                    </h1>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <nav id="o_wforum_nav" aria-label="breadcrumb" class="navbar d-flex gap-2 mt16 px-0">
+                        <div class="o_wforum_breadcrumb_root_list_or_edit d-flex" t-if="forum">
+                            <a href="/discussion/forum">Back to forum </a>
+                        </div>
+                        <div class="d-flex justify-content-lg-end gap-2 flex-grow-1 flex-wrap flex-md-nowrap w-100 w-lg-auto mw-xl-100 forum_list_navbar">
+                               <t t-call="bluemax_forum.search"/>
+                                <a role="button" type="button" class="o_wforum_ask_btn btn btn-primary w-100 w-md-auto " 
+                                    t-attf-href="/discussion/forum/#{slug(forum)}/ask" t-if="forum">
+                                    New Post
+                                </a>
+                        </div>
+                    </nav>
+                    <table class="table forum_display_layout_cl table-striped table-bordered mt16" t-if="question_ids">
+                        <thead>
+                        <tr>
+                          <th>Subject</th>
+                          <th>Opened By</th>
+                          <th>Last Post</th>
+                          <th>Reply</th>
+                          <th>Viewed</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="question_ids" t-as="question_id">
+                              <td><a t-attf-href="/discussion/forum/#{slug(question_id.forum_id)}/#{slug(question_id)}"><t t-esc="question_id.name"/></a></td>
+                              <td>
+                                  <div class="d-flex flex-column small">
+                                    <a t-attf-href="/forum/user/info/#{question_id.create_uid.sudo().id}">
+                                        <t t-esc="question_id.create_uid.sudo().name"/>
+                                    </a>
+                                   </div>
+                                   <t t-if="website.get_user_rank_logs(question_id.create_uid.sudo()) and not question_id.create_uid.sudo().has_group('bluemax_forum.group_moderator')">
+                                     <img t-att-src="website.get_user_rank_logs(question_id.create_uid.sudo())" style="max-height:22px;"/>
+                                   </t>
+                                   <t t-if="question_id.create_uid.sudo().has_group('bluemax_forum.group_moderator')">
+                                      <b><i>Moderator</i></b>
+                                   </t>
+                              </td>
+                              <td>
+                                  <div class="d-flex flex-column small">
+                                     <span>Last reply by <t t-esc="question_id.last_reply_uid.sudo().name"/> on</span>
+                                     <span>
+                                        <span t-field="question_id.last_activity_date" t-options='{"format": "MMMM d, Y"}'></span>
+                                        at
+                                        <span t-field="question_id.last_activity_date" t-options='{"format": "h:mm:ss a"}'></span>
+                                        <a title="Click here to go to the last post 
+I agree. The article is about midget racing and how the numbers don't really pan out for it to work well. It goes " t-attf-href="/discussion/forum/#{slug(question_id.forum_id)}/#{slug(question_id)}/last/post">
+<img src="/bluemax_forum/static/src/img/lastPost.gif" border="0"/></a>
+                                    </span>
+                                  </div>
+                              </td>
+                              <td><t t-esc="len(question_id.child_ids)"/></td>
+                              <td><t t-esc="question_id.views"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <t t-if="forum and not question_ids">
+                        <h2 class="mt64 text-center">Not post in this <t t-esc="forum.name"/></h2>
+                    </t>
+                    <div class="d-flex justify-content-center mt32 mb32">
+                        <t t-call="website.pager"/>
+                    </div>
+                </div>
+                <section class="oe_structure oe_empty" id="bottom_level_section"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="new_question" name="New Post">
+        <t t-call="bluemax_forum.layout">
+            <div id="wrap">
+                <section class="oe_structure oe_empty" id="top_level_section"/>
+                <div class="container o_not_editable">
+                    <div class="col-md-8 offset-md-2">
+                        <nav id="o_wforum_nav" aria-label="breadcrumb" class="navbar d-flex gap-2 justify-content-center px-0">
+                            <div class="o_wforum_breadcrumb_root_list_or_edit d-flex">
+                                <div class="col-10 col-lg flex-grow-1 fs-5">
+                                    <span class="fw-bold mb-0"><t t-esc="forum.name"/></span>
+                                </div>
+                            </div>
+                        </nav>
+                        <form t-attf-action="/discussion/forum/#{slug(forum)}/new" method="post" role="form" class="tag_text js_website_submit_form js_wforum_submit_form o_wforum_readable mt-lg-3">
+                            <div class="row mb-3">
+                                <label class="form-label col-lg-2" for="content">Title</label>
+                                <div class="col">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="text" name="post_name" required="required" pattern=".*\S.*" t-att-value="post_name"
+                                        class="form-control" placeholder="Write a clear, explicit and concise title" title="Title must not be empty"/>
+    
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label class="form-label col-lg-2" for="content">Description</label>
+                                <div class="col">
+                                    <textarea name="content" required="required" id="content" class="form-control o_wysiwyg_loader">
+                                        <t t-out="question_content"/>
+                                    </textarea>
+                                </div>
+                            </div>
+                            <div class="row mb-5">
+                                <div class="col offset-lg-2">
+                                    <button type="submit" t-attf-class="o_wforum_submit_post btn btn-primary">Post Message</button>
+                                    <a class="btn btn-link" title="Back to Question" t-attf-href="/discussion/forum/#{ slug(forum) }">Discard</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <section class="oe_structure oe_empty" id="bottom_level_section"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="post_description_full" name="New Post">
+        <t t-call="bluemax_forum.layout">
+            <div id="wrap">
+                <section class="oe_structure oe_empty" id="top_level_section"/>
+                <div itemprop="description" t-field="question.forum_id.website_description" class="oe_structure oe_empty mt16" id="product_full_description" t-if="question and question.forum_id">
+                    <section>
+                        <div align="center" class="mt16">       
+                            <a href="/"><img src="/bluemax_forum/static/src/img/placeholder.png" border="0" class="mw-100"/></a>
+                        </div>
+                        <br/>
+                        <br/>
+                    </section>
+                </div>
+                <div class="container o_not_editable">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="2" t-if="forum">
+                           <tbody>
+                              <tr>
+                                 <td class="size12" align="center">
+                                    <h1 class="h4">
+                                       Forum: <span t-field="forum.name"/> (<a t-attf-href="/discussion/forum/#{slug(forum)}">go</a>)<br/>
+                                    </h1>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="post_grid_main_cl border-primary mt32" style="border: 2px solid;">
+                                <div class="grid_item_sub bg-primary d-inline-block w-100">
+                                    <a t-attf-href="/discussion/forum/#{slug(forum)}" style="vertical-align: middle;align-items: center;line-height: 23px;color: white;" title="Back">
+                                                <i class="fa fa-chevron-left"/>
+                                    </a>
+                                    <t t-call="bluemax_forum.search"/>
+                                    <div class="tmplsds d-md-inline">
+                                        <button class="btn btn-secondary mx-4 reply_post_msg" t-att-data-partner_id="question.create_uid.sudo().partner_id.id" t-att-data-user_id="question.create_uid.sudo().id" t-att-data-question_post_id="question.id" t-if="question.state != 'close'">
+                                           Post Reply   
+                                        </button>
+                                        <div class="oe_inline_follow_button">
+                                            <t t-if="question.state == 'active'" t-call="bluemax_forum.follow">
+                                                <t t-set="object" t-value="question.forum_id"/>
+                                                <t t-set="icons_design" t-value="True"/>
+                                                <t t-set="btn_classes" t-value="'btn-lg' "/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid_item_sub">
+                                </div>
+                                <div class="grid_item_sub bg-primary text-white">
+                                    <b>
+                                        Topic: <t t-esc="question.name"/>
+                                    </b>
+                                </div>
+                                <div class="grid_item_sub text-center bg-white">
+                                    <b>
+                                        <i>
+                                            Page <t t-esc="page"/> of <t t-esc="total_pages"/> &amp;nbsp;&amp;nbsp;of&amp;nbsp;&amp;nbsp;<t t-esc="total_posts"/> replies
+                                        </i>
+                                    </b>
+                                </div>
+                                <div class="grid_item_sub gdpost_info align-text-top bg-secondary" t-if="page == 1" t-attf-id="post_message_#{question.id}">
+                                    <div class="grid_item_sub_item grid_item_sub_item_grid">
+                                        <div class="grid_item_sub_under border-primary">
+                                            <table>
+                                                    <tbody>
+                                                        <tr>
+                                                           <t t-set="base64_image" t-value="question.create_uid.sudo().image_128 and question.create_uid.sudo().image_128.decode('utf-8') or False"/>
+                                                            <td t-if="base64_image">
+                                                                <img t-att-src="'data:image/png;base64,' + base64_image" border="0"/>
+                                                            </td>
+                                                           <td align="left" valign="top">
+                                                              <table border="0" cellpadding="0" cellspacing="5">
+                                                                 <tbody>
+                                                                    <tr>
+                                                                       <td colspan="2">
+                                                                          <a t-attf-href="/forum/user/info/#{question.create_uid.sudo().id}">
+                                                                              <t t-esc="question.create_uid.sudo().name"/>
+                                                                          </a>
+                                                                       </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                    </tr>
+                                                                 </tbody>
+                                                              </table>
+                                                           </td>
+                                                        </tr>
+                                                        <tr>
+                                                           <td colspan="2">
+                                                              <div class="small">
+                                                                  <span t-field="question.create_date" t-options='{"format": "MMMM d, Y"}'></span>
+                                                                    at
+                                                                    <span t-field="question.create_date" t-options='{"format": "h:mm:ss a"}'></span>
+                                                              </div> 
+                                                           </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                        </div>
+                                        <div class="grid_item_sub_under border-primary">
+                                            <table border="0">
+                                                 <tbody>
+                                                    <tr>
+                                                       <td>
+                                                          Joined:
+                                                       </td>
+                                                       <td align="left">
+                                                          <span t-field="question.create_uid.sudo().create_date" t-options='{"format": "MM/dd/YYYY"}'/>
+                                                          
+                                                       </td>
+                                                    </tr>
+                                                    <tr>
+                                                       <td>
+                                                          Posts:
+                                                       </td>
+                                                       <td align="left">
+                                                          <t t-esc="question.create_uid.sudo().user_post_count"/>
+                                                       </td>
+                                                    </tr>
+                                                 </tbody>
+                                              </table>
+                                        </div>
+                                        <div class="grid_item_sub_under border-primary">
+                                            <table align="center">
+                                                 <tbody>
+                                                    <tr>
+                                                       <td>
+                                                          <a href="#" class="reply_post_msg" t-att-data-partner_id="question.create_uid.sudo().partner_id.id" t-att-data-user_id="question.create_uid.sudo().id" t-att-data-question_post_id="question.id" t-att-data-reply_post_id="question.id" t-if="question.state != 'close'">Reply</a>
+                                                          <t t-if="question.state != 'close' and user.has_group('bluemax_forum.group_moderator')">
+                                                            |
+                                                              <a href="#" class="anchor_post_msg_cl" t-att-data-question_post_id="question.id">Anchor</a>
+                                                          </t>
+                                                          <t t-if="question.state != 'close' and user.has_group('bluemax_forum.group_moderator')">
+                                                              |
+                                                              <a href="#" class="edit_post_msg_cl" t-att-data-question_post_id="question.id">Edit</a>
+                                                          </t>
+                                                          <t t-if="question.state == 'active' and user.has_group('bluemax_forum.group_moderator')">
+                                                          |
+                                                            <a t-attf-href="/discussion/forum/#{slug(forum)}/question/#{slug(question)}/close" class="close_post_msg_cl" t-if="question.state == 'active'">Close Thread</a>
+                                                          </t>
+                                                          <t t-if="question.state == 'close' and user.has_group('bluemax_forum.group_moderator')">
+                                                              <a t-attf-href="/discussion/forum/#{slug(forum)}/question/#{slug(question)}/reopen" class="close_post_msg_cl" t-if="question.state == 'close'">Reopen Thread</a>
+                                                          </t>
+                                                          <t t-if="user.has_group('bluemax_forum.group_moderator')">
+                                                              |
+                                                              <a t-attf-href="/discussion/forum/#{slug(forum)}/question/#{slug(question)}/delete" title="Verify Delete" onclick="return confirm('Are you sure you want to delete this post?')">Delete Post</a>
+                                                          </t>
+                                                          <t t-if="user.has_group('bluemax_forum.group_moderator')">
+                                                            |
+                                                             <a t-attf-href="/discussion/forum/#{slug(forum)}/question/#{slug(question)}/delete_posts_and_ban_user" title="Verify Delete" onclick="return confirm('Are you sure you want to delete all Posts and Ban the user? It cannot be recovered!');">Delete All Posts and Ban User</a>
+                                                          </t>
+                                                       </td>
+                                                    </tr>
+                                                 </tbody>
+                                              </table>
+                                        </div>
+                                    </div>
+                                    <div class="grid_item_sub_item border-primary" style="border-bottom:8px solid;">
+                                        <div class="main_thread_containt" t-attf-qpost_id="question_post_#{question.id}">
+                                              <t t-out="question.content"/>
+                                          </div>
+                                          <br/>
+                                    </div>
+                                </div>
+                                <t t-if="childs_post_ids">
+                                    <t t-foreach="childs_post_ids" t-as="child_post">
+                                        <div class="grid_item_sub gdpost_info align-text-middle" t-if="page == 1" t-attf-id="post_message_#{question.id}" style="background-color:#F4F4FF;">
+                                            <div class="grid_item_sub_item grid_item_sub_item_grid">
+                                                <div class="grid_item_sub_under border-primary d-flex">
+                                                    <table>
+                                                     <tbody>
+                                                        <tr>
+                                                           <t t-set="base64_image" t-value="child_post.create_uid.sudo().image_128 and child_post.create_uid.sudo().image_128.decode('utf-8') or False"/>
+                                                            <td t-if="base64_image">
+                                                                <img t-att-src="'data:image/png;base64,' + base64_image" border="0"/>
+                                                            </td>
+                                                           <td align="left" valign="top">
+                                                              <table border="0" cellpadding="0" cellspacing="5">
+                                                                 <tbody>
+                                                                    <tr>
+                                                                       <td colspan="2">
+                                                                          <a t-attf-href="/forum/user/info/#{child_post.create_uid.sudo().id}">
+                                                                              <t t-esc="child_post.create_uid.sudo().name"/>
+                                                                          </a>
+                                                                       </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                    </tr>
+                                                                 </tbody>
+                                                              </table>
+                                                           </td>
+                                                        </tr>
+                                                        <tr>
+                                                           <td colspan="2">
+                                                              <div class="small">
+                                                                  <span t-field="child_post.create_date" t-options='{"format": "MMMM d, Y"}'></span>
+                                                                    at
+                                                                    <span t-field="child_post.create_date" t-options='{"format": "h:mm:ss a"}'></span>
+                                                              </div>  
+                                                           </td>
+                                                        </tr>
+                                                     </tbody>
+                                                  </table>
+                                                </div>
+                                                <div class="grid_item_sub_under border-primary d-flex">
+                                                    <table border="0">
+                                                     <tbody>
+                                                        <tr>
+                                                           <td>
+                                                              Joined:
+                                                           </td>
+                                                           <td align="left">
+                                                              <span t-field="child_post.create_uid.sudo().create_date" t-options='{"format": "MM/dd/YYYY"}'/>
+                                                           </td>
+                                                        </tr>
+                                                        <tr>
+                                                           <td>
+                                                              Posts:
+                                                           </td>
+                                                           <td align="left">
+                                                              <t t-esc="child_post.create_uid.sudo().user_post_count"/>
+                                                           </td>
+                                                        </tr>
+                                                     </tbody>
+                                                  </table>
+                                                </div>
+                                                <div class="grid_item_sub_under border-primary d-flex">
+                                                    <table align="center">
+                                                     <tbody>
+                                                        <tr>
+                                                           <td>
+
+                                                              <a href="#" class="reply_post_msg" t-att-data-partner_id="child_post.create_uid.sudo().partner_id.id" t-att-data-user_id="child_post.create_uid.sudo().id" t-att-data-question_post_id="question.id" t-att-data-reply_post_id="child_post.id" t-if="question.state != 'close'">Reply</a>
+                                                            <t t-if="user.has_group('bluemax_forum.group_moderator') or child_post.create_uid.sudo().id == user.id">
+                                                              |
+                                                                <a href="#" class="edit_post_msg_cl" t-att-data-question_post_id="child_post.id">Edit</a>
+                                                            </t>
+                                                            <t t-if="user.has_group('bluemax_forum.group_moderator')">
+                                                              | <a t-attf-href="/discussion/forum/#{slug(forum)}/question/#{slug(child_post)}/delete" onclick="return confirm('Are you sure you want to delete this post?')">Delete Post</a>
+                                                             </t>
+                                                           </td>
+                                                        </tr>
+                                                     </tbody>
+                                                  </table>
+                                                </div>
+                                            </div>
+                                            <div class="grid_item_sub_item border-primary" style="border-bottom:8px solid;">
+                                                <t t-if="child_post.reply_parent_id">
+                                                    <div class="main_thread_containt">
+                                                          Reply to:<br/>
+                                                          <table border="1" bgcolor="#FFFF66">
+                                                             <tbody>
+                                                                <tr>
+                                                                   <td>
+                                                                     <div class="small">
+                                                                      Posted By : <t t-esc="child_post.reply_parent_id.create_uid.sudo().name"/>
+                                                                       <span t-field="child_post.reply_parent_id.sudo().create_date" t-options='{"format": "MMMM d Y"}'></span>
+                                                                        at
+                                                                        <span t-field="child_post.reply_parent_id.sudo().create_date" t-options='{"format": "h:mm:ss a"}'></span>
+                                                                       </div>
+                                                                        <br/>
+                                                                      <t t-out="child_post.reply_parent_id.content"/>
+                                                                   </td>
+                                                                </tr>
+                                                             </tbody>
+                                                          </table>
+                                                  </div>
+                                                   </t>
+                                                  <div class="main_thread_containt" t-attf-qpost_id="question_post_#{child_post.id}">
+                                                      <t t-out="child_post.content"/>
+                                                  </div>
+                                                  <br/>
+                                                  <br/>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </t>
+                            </div>
+                            <div class="d-flex justify-content-center mt32">
+                                <t t-call="website.pager"/>
+                            </div>
+                            <br/>
+                            <button class="btn btn-primary reply_post_msg" t-att-data-partner_id="question.create_uid.sudo().partner_id.id" t-att-data-user_id="question.create_uid.sudo().id" t-att-data-question_post_id="question.id" t-if="question.state != 'close'">
+                               Post Reply   
+                            </button>
+                            <br/>
+                            <br/>
+                        </div>
+                    </div>
+                </div>
+                <section class="oe_structure oe_empty" id="top_level_section"/>
+            </div>
+        </t>
+    </template>
+
+    <template id="post_answer_msg">
+        <div class="d-flex align-items-center mb-3">
+            <div class="d-flex align-items-center">
+                <img t-if="user" t-attf-class="o_wforum_avatar me-2 rounded-circle" t-att-src="request.website.image_url(user, 'avatar_128', '24x24')" alt="Avatar"/>
+                <h4 class="my-0">Post Message</h4>
+            </div>
+        </div>
+            <form t-att-action="action_url" method="post" class="js_website_submit_form js_wforum_submit_form d-flex flex-column" role="form" t-if="question">
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+            <t t-if="reply_post_id">
+                <input type="hidden" name="reply_parent_id" t-att-value="reply_post_id"/>
+            </t>
+            <div class="o_wysiwyg_textarea_wrapper">
+                <textarea name="content" t-attf-id="content-#{str(question.id)}" class="form-control o_wysiwyg_loader" required="required" minlength="50"/>
+            </div>
+            <div>
+                <button type="submit" t-attf-class="o_wforum_submit_post btn btn-primary my-3">Post Reply</button>
+                <a href="#"
+                   class="o_wforum_discard_btn btn btn-link"
+                >Discard</a>
+            </div>
+        </form>
+    </template>
+
+    <template id="post_answer">
+        <div class="d-flex align-items-center mb-3">
+            <div class="d-flex align-items-center">
+                <img t-if="user" t-attf-class="o_wforum_avatar me-2 rounded-circle" t-att-src="request.website.image_url(user, 'avatar_128', '24x24')" alt="Avatar"/>
+                <h4 class="my-0">Post Reply</h4>
+            </div>
+        </div>
+            <form t-att-action="action_url" method="post" class="js_website_submit_form js_wforum_submit_form d-flex flex-column" role="form" t-if="question">
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+            <t t-if="reply_post_id">
+                <input type="hidden" name="reply_parent_id" t-att-value="reply_post_id"/>
+            </t>
+            <div class="o_wysiwyg_textarea_wrapper">
+                <textarea name="content" t-attf-id="content-#{str(question.id)}" class="form-control o_wysiwyg_loader" required="required" minlength="50"/>
+            </div>
+            <div>
+                <button type="submit" t-attf-class="o_wforum_submit_post btn btn-primary my-3">Submit Reply</button>
+                <a href="#"
+                   class="o_wforum_discard_btn btn btn-link"
+                >Discard</a>
+            </div>
+        </form>
+    </template>
+
+    <template id="edit_post_answer">
+        <div class="d-flex align-items-center mb-3">
+            <div class="d-flex align-items-center">
+                <img t-if="user" t-attf-class="o_wforum_avatar me-2 rounded-circle" t-att-src="request.website.image_url(user, 'avatar_128', '24x24')" alt="Avatar"/>
+                <h4 class="my-0">Edit Post</h4>
+            </div>
+        </div>
+        <form t-att-action="action_url" method="post" role="form" class="js_website_submit_form js_wforum_submit_form d-flex flex-column">
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+            <div class="row mb-3" t-if="not question.parent_id">
+                <label class="form-label col-lg-2" for="content">Title</label>
+                <div class="col">
+                    <input type="text" name="post_name" required="required" pattern=".*\S.*" t-att-value="post_name"
+                        class="form-control" placeholder="Write a clear, explicit and concise title" title="Title must not be empty"/>
+
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label class="form-label col-lg-2" for="content">Description</label>
+                <div class="col">
+                    <div class="o_wysiwyg_textarea_wrapper">
+                        <textarea name="content" required="required" id="content" class="form-control o_wysiwyg_loader">
+                            <t t-out="question.content"/>
+                        </textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-5">
+                <div class="col offset-lg-2">
+                    <button type="submit" t-attf-class="o_wforum_submit_post btn btn-primary">Edit Message</button>
+                    <a href="#"
+                       class="o_wforum_discard_btn btn btn-link"
+                    >Discard</a>
+                </div>
+            </div>
+        </form>
+    </template>
+
+    <template id="reply_post_popup_main" name="Reply Post">
+        <div id="reply_post_popup_main" class="position-fixed d-flex flex-column start-0 end-0 bottom-0 w-100 w-lg-50 shadow mx-auto px-3 bg-body">
+            <t t-if="not is_edit_post_open">
+                <t t-if="reply_post_id">
+                    <div t-call="bluemax_forum.post_answer" class="container my-3"/>
+                </t>
+                <t t-else="">
+                    <div t-call="bluemax_forum.post_answer_msg" class="container my-3"/>
+                </t>
+            </t>
+            <t t-if="is_edit_post_open">
+                <div t-call="bluemax_forum.edit_post_answer" class="container my-3"/>
+            </t>
+        </div>
+    </template>
+
+    <template id="forum_user_profile_info" name="User Profile">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <section class="oe_structure oe_empty" id="top_level_section">
+                    <table width="100%" border="0">
+                       <tbody>
+                          <tr>
+                             <td colspan="2" align="center">
+                                &amp;nbsp;
+                             </td>
+                          </tr>
+                          <tr>
+                             <td colspan="2">
+                                <div align="center"><a href="/"><img src="/bluemax_forum/static/src/img/placeholder.png" border="0" title="#"/></a>   </div>
+                             </td>
+                          </tr>
+                          <tr>
+                             <td colspan="2">
+                                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                   <tbody>
+                                      <tr>
+                                         <td class="size12" align="center">
+                                            
+                                         </td>
+                                      </tr>
+                                   </tbody>
+                                </table>
+                             </td>
+                          </tr>
+                       </tbody>
+                    </table>
+                </section>
+                <div class="container o_not_editable">
+                    <div class="row">
+                        <div class="col-md-12 mb32">
+                            <span class="size16" style="color: #000000; font-size: 16px; font-weight: bold">User Info:</span>
+                            <table border="0" cellspacing="0" cellpadding="2">
+                               <tbody>
+                                  <tr>
+                                     <td>UserName:</td>
+                                     <td><t t-esc="profile_user_id.name"/></td>
+                                  </tr>
+                                  <tr>
+                                     <td>User Status:</td>
+                                     <td>
+                                        <t t-esc="website.get_user_rank_status(profile_user_id)"/>
+                                     </td>
+                                  </tr>
+                                  <tr>
+                                     <td>Registered:</td>
+                                     <td>
+                                        <span t-field="profile_user_id.sudo().create_date" t-options='{"format": "MM/dd/YYYY"}'/>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                     <td># of Posts:</td>
+                                     <td><t t-esc="profile_user_id.sudo().user_post_count"/></td>
+                                  </tr>
+                                  <tr>
+                                     <td>Email:</td>
+                                     <td><a t-attf-href="/forum/user/send/mail/#{profile_user_id.sudo().id}">Send a Email to <t t-esc="profile_user_id.sudo().name"/></a></td>
+                                  </tr>
+                                  <tr>
+                                     <td>Search:</td>
+                                     <td><a t-attf-href="/discussion/forum/all?create_uid=#{profile_user_id.sudo().id}">Search for posts by <t t-esc="profile_user_id.sudo().name"/></a></td>
+                                  </tr>
+                                  <tr>
+                                     <td valign="top">Last Post:</td>
+                                     <td>
+                                        <t t-if="website.get_last_post_of_user(profile_user_id.sudo().id)">
+                                            <t t-set="lastuserpost" t-value="website.get_last_post_of_user(profile_user_id.sudo().id)"/>
+                                            <a t-attf-href="/discussion/forum/#{slug(lastuserpost.forum_id)}/#{slug(lastuserpost)}"><t t-esc="website.get_last_post_of_user(profile_user_id.sudo().id).name"/><br/>
+                                            <span t-esc="lastuserpost.create_date.strftime('%A %B, %Y')"/>
+                                                at
+                                                <span t-esc="lastuserpost.create_date.strftime('%I:%M:%S %p')"/>
+                                            </a> 
+                                        </t>
+                                     </td>
+                                  </tr>
+                               </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <section class="oe_structure oe_empty" id="bottom_level_section">
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="send_mail_to_user" name="Send Mail">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <section class="oe_structure oe_empty" id="top_level_section">
+                    <table width="100%" border="0">
+                       <tbody>
+                          <tr>
+                             <td colspan="2" align="center">
+                                &amp;nbsp;
+                             </td>
+                          </tr>
+                          <tr>
+                             <td colspan="2">
+                                <div align="center"><a href="/"><img src="/bluemax_forum/static/src/img/placeholdermain.png" border="0" title=""/></a>   </div>
+                             </td>
+                          </tr>
+                          <tr>
+                             <td colspan="2">
+                                <table width="100%" border="0" cellspacing="0" cellpadding="2">
+                                   <tbody>
+                                      <tr>
+                                         <td class="size12" align="center">
+                                            
+                                         </td>
+                                      </tr>
+                                   </tbody>
+                                </table>
+                             </td>
+                          </tr>
+                       </tbody>
+                    </table>
+                </section>
+                <div class="container o_not_editable">
+                    <div class="row">
+                        <div class="col-md-12 mb32">
+                            <span class="size16" style="color: #000000; font-size: 16px; font-weight: bold">Email User - <t t-esc="profile_user_mail.sudo().name"/></span>
+                            <br/>
+                            <br/>
+                            <form action="/forum/send/mail/to/user" method="post">
+                               <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                               <input type="hidden" name="send_user_id" t-att-value="profile_user_mail.sudo().id"/>    
+                               <table border="0" cellspacing="2" cellpadding="2">
+                                  <tbody>
+                                     <tr valign="top">
+                                        <td><span class="size14" style="color: #333333; font-style: italic; font-weight: bold">Message:</span></td>
+                                        <td><textarea name="content" cols="60" rows="5"></textarea></td>
+                                     </tr>
+                                     <tr>
+                                        <td></td>
+                                        <td><input type="submit" name="btnSubmit" id="btnSubmit" value="Send Email"/></td>
+                                     </tr>
+                                  </tbody>
+                               </table>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <section class="oe_structure oe_empty" id="bottom_level_section">
+                </section>
+            </div>
+        </t>
+    </template>
+
+</odoo>
