@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <template id="donation_bluemaxpay_form_inherit" inherit_id="payment_bluemaxpay.bluemaxpay_form">
+        <xpath expr="//t[@t-if='invoice.partner_shipping_id']//.." position="after">
+            <t t-if="is_website_donation">
+                <t t-if="request.env.user.partner_id">
+                    <t t-set="payment_address" t-value="request.env.user.partner_id" />
+                </t>
+            </t>
+        </xpath>
+        <xpath expr="//t[@t-else='']//div[@id='web_city']" position="before">
+            <div t-if="is_website_donation" t-attf-class="mb-3 #{error.get('email') and 'o_has_error' or ''} col-sm-5 form-group" id="div_email">
+                <label class="col-form-label" for="email">Email
+                </label>
+                <input t-att-readonly="'1' if 'email' in partner_details and partner_id else None" type="email" name="email" t-attf-class="form-control #{error.get('email') and 'is-invalid' or ''}" t-att-value="partner_details.get('email')"/>
+                <input type="hidden" name="donation_recipient_email" t-att-value="donation_options.get('donationEmail')"/>
+            </div>
+        </xpath>
+    </template>
+
     <!-- Insert the donation form inside the payment form's <form/> element. -->
     <template id="payment_form_inherit" inherit_id="payment.form">
         <xpath expr="//div[@id='o_payment_form_options']" position="before">
@@ -50,7 +68,7 @@
                 </label>
                 <input t-att-readonly="'1' if 'name' in partner_details and partner_id else None" type="text" name="name" t-attf-class="form-control #{error.get('name') and 'is-invalid' or ''}" t-att-value="partner_details.get('name')" required="required"/>
             </div>
-            <div t-attf-class="#{error.get('street') and 'o_has_error'} div_street col-lg-12 mb-2 #{not request.env.user._is_public() and 'd-none' or ''}">
+            <!-- <div t-attf-class="#{error.get('street') and 'o_has_error'} div_street col-lg-12 mb-2 #{not request.env.user._is_public() and 'd-none' or ''}">
                 <label class="col-form-label" for="street">Street and Number</label>
                 <input type="text" name="street" t-attf-class="form-control #{error.get('street') and 'is-invalid' or ''}" t-att-value="" />
             </div>
@@ -107,7 +125,7 @@
                         </option>
                     </t>
                 </select>
-            </div>
+            </div> -->
             <h5 class="text-left">
                 <b>
                     Donation Amount
@@ -142,7 +160,7 @@
                     <textarea class="form-control d-none mt-2" id="donation_comment" placeholder="Your comment"/>
                 </div>
             </div>
-            <input type="hidden" name="donation_recipient_email" t-att-value="donation_options.get('donationEmail')"/>
+            <!-- <input type="hidden" name="donation_recipient_email" t-att-value="donation_options.get('donationEmail')"/> -->
             <div class="w-100"></div>
         </div>
         <h3 class="o_page_header mt16 mb4">Payment Details</h3>

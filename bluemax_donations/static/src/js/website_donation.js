@@ -6,7 +6,7 @@ import publicWidget from '@web/legacy/js/public/public_widget';
 const CUSTOM_BUTTON_EXTRA_WIDTH = 10;
 
 publicWidget.registry.KnkDonationSnippet = publicWidget.Widget.extend({
-    selector: '.knk_donation',
+    selector: '.knk_donation, .knk_donation_payment_form',
     disabledInEditableMode: false,
     events: {
         'click .s_donation_btn': '_onClickPrefilledButton',
