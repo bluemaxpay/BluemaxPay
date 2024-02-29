@@ -33,6 +33,24 @@ html{
             width: 100%;
         }
     }
+    #forum_post_list_main.table > :not(caption) > * > *{
+        padding: 1px 1px 1px 2px;
+    }
+    #forum_post_list_main.table > tbody > tr{
+        border-top: 6px solid;
+        border-color: o-color('primary');
+        border-bottom-color: o-color('primary');
+    }
+    #forum_post_list_main.table > tbody > tr > td:first-child{
+        padding-top: 5px;
+    }
+    #forum_post_list_main.table > tbody > tr > td:last-child{
+        padding-bottom: 5px;
+    }
+    #forum_post_list_main.table > tbody > tr:last-child{
+        border-bottom: 6px solid;
+        border-bottom-color: o-color('primary');
+    }
 }
 .post_grid_main_cl{
     .grid_item_sub{

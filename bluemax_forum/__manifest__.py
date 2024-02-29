@@ -19,6 +19,9 @@
     ],
     'assets': {
         'web.assets_frontend': [
+            'bluemax_forum/static/src/scss/basictable.css',
+            'bluemax_forum/static/src/js/jquery.basictable.min.js',
+            'bluemax_forum/static/src/js/basictable.min.js',
             'bluemax_forum/static/src/scss/custom.scss',
             'bluemax_forum/static/src/js/custom.js',
         ]

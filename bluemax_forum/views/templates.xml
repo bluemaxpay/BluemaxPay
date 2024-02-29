@@ -98,7 +98,7 @@
                         </tbody>
                     </table>
                     <t t-if="not forums">
-                        <h2 class="mt64 text-center">Not Found any Forums</h2>
+                        <h2 class="mt64 text-center">Not Forums Found</h2>
                     </t>
                 </div>
                 <section class="oe_structure oe_empty" id="bottom_level_section"/>
@@ -156,7 +156,7 @@
                                 </a>
                         </div>
                     </nav>
-                    <table class="table forum_display_layout_cl table-striped table-bordered mt16" t-if="question_ids">
+                    <table id="forum_post_list_main" class="table forum_display_layout_cl table-striped table-bordered mt16" t-if="question_ids">
                         <thead>
                         <tr>
                           <th>Subject</th>
@@ -201,7 +201,8 @@ I agree. The article is about midget racing and how the numbers don't really pan
                         </tbody>
                     </table>
                     <t t-if="forum and not question_ids">
-                        <h2 class="mt64 text-center">Not post in this <t t-esc="forum.name"/></h2>
+                        <h2 class="mt64 text-center"><t t-esc="forum.name"/><br/>No Posts In This Forum <br/>
+                        </h2>
                     </t>
                     <div class="d-flex justify-content-center mt32 mb32">
                         <t t-call="website.pager"/>
