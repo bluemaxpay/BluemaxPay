@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sms_history_list" model="ir.ui.view">
+        <field name="name">sms.history.list</field>
+        <field name="model">sms.history</field>
+        <field name="arch" type="xml">
+            <tree string="SMS History" decoration-success="state in ['sent', 'delivered']" decoration-info="state == 'queued'" decoration-danger="state in ['undelivered', 'failed']" create="false" edit="false">
+                <field name="date" />
+                <field name="from_mobile" />
+                <field name="to_mobile" />
+                <field name="partner_id" />
+                <field name="sms_reference" />
+                <field name="message" />
+                <field name="sms_gateway" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+    <record id="sms_history_form" model="ir.ui.view">
+        <field name="name">sms.history.form</field>
+        <field name="model">sms.history</field>
+        <field name="arch" type="xml">
+            <form string="SMS History" create="false" edit="false">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,queued,sent,delivered" />
+                </header>
+                <sheet>
+                    <group>
+                        <field name="date" />
+                        <field name="from_mobile" />
+                        <field name="to_mobile" />
+                        <field name="partner_id" />
+                        <field name="sms_gateway" />
+                        <field name="sms_reference" />
+                        <field name="message" />
+                        <field name="res_model" />
+                        <field name="res_id" />
+                        <field name="error_message" invisible="state != 'failed'" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="sms_history_search" model="ir.ui.view">
+        <field name="name">sms.history.search</field>
+        <field name="model">sms.history</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id" string="Contact" />
+                <field name="sms_gateway" string="Gateway" />
+                <group expand="0" string="Group By">
+                    <filter string="Gateway" name="sms_gateway_filter" domain="[]" context="{'group_by': 'sms_gateway'}" />
+                    <filter string="State" name="state" domain="[]" context="{'group_by': 'state'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="sms_history_graph" model="ir.ui.view">
+        <field name="name">sms.history.graph</field>
+        <field name="model">sms.history</field>
+        <field name="arch" type="xml">
+            <graph string="SMS History" type="bar">
+                <field name="date" type="col" interval="day"/>
+                <field name="state" type="row"/>
+            </graph>
+        </field>
+    </record>
+    <record id="action_sms_history" model="ir.actions.act_window">
+        <field name="name">SMS History</field>
+        <field name="res_model">sms.history</field>
+        <field name='view_mode'>tree,form,graph</field>
+    </record>
+    <menuitem id='sms_history_menu' action='action_sms_history' parent='sms_gateway_kanak.sms_config_menu' sequence='10' />
+</odoo>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_send_custom_sms_smseagle" model="ir.actions.act_window">
+        <field name="name">Send SMS</field>
+        <field name="res_model">send.custom.sms.wizard</field>
+        <field name='view_mode'>form</field>
+        <field name='target'>new</field>
+        <field name='context'>{'default_sms_gateway_id': active_id}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create and send a SMS
+            </p>
+        </field>
+    </record>
+    <record id="sms_gateway_form_smseagle" model="ir.ui.view">
+        <field name="name">sms.gateway.form.smseagle</field>
+        <field name="model">sms.gateway</field>
+        <field name="inherit_id" ref="sms_gateway_kanak.sms_gateway_form" />
+        <field name="arch" type="xml">
+            <xpath expr='//group[@name="sms_gateway"]' position='inside'>
+                <group invisible="gateway != 'smseagle'">
+                    <field
+                        name="smseagle_access_token"
+                        password="True"
+                        required="gateway == 'smseagle' and state != 'disabled'" />
+                    <field
+                        name="smseagle_test_mobile"
+                        string="Test Mobile"
+                        required="gateway == 'smseagle' and state != 'disabled'" />
+                </group>
+            </xpath>
+            <xpath expr='//group[@name="sms_gateway"]' position='after'>
+                <div invisible="gateway != 'smseagle'">
+                    <span class='text-danger'>
+                        Note: Must use country code as prefix without "+" (ex. 919876543210)
+                    </span>
+                </div>
+                <button
+                    type='object'
+                    name='send_smseagle_test_sms'
+                    string='Send Test SMS'
+                    class='oe_highlight'
+                    invisible="gateway != 'smseagle'" />
+            </xpath>
+        </field>
+    </record>
+    <record id="sms_gateway_kanban_smseagle" model="ir.ui.view">
+        <field name="name">sms.gateway.kanban.smseagle</field>
+        <field name="model">sms.gateway</field>
+        <field name="inherit_id" ref="sms_gateway_kanak.sms_gateway_kanban" />
+        <field name="arch" type="xml">
+            <xpath expr='//div[@name="send_quick_sms"]' position='inside'>
+                <button
+                    type="action"
+                    name="%(sms_gateway_smseagle.action_send_custom_sms_smseagle)d"
+                    class="btn btn-primary"
+                    invisible="gateway != 'smseagle'">
+                        <span>Send SMS</span>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

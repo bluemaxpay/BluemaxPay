@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="sms_gateway_smseagle" model="sms.gateway">
+            <field name="name">SMSEagle</field>
+            <field name="image_128" type="base64" file="sms_gateway_smseagle/static/description/icon.png" />
+            <field name="gateway">smseagle</field>
+            <field name="company_id" ref="base.main_company" />
+            <field name="state">disabled</field>
+            <field name="module_id" ref="base.module_sms_gateway_smseagle" />
+        </record>
+    </data>
+</odoo>

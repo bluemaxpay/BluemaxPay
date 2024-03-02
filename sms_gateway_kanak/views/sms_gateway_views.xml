@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sms_gateway_form" model="ir.ui.view">
+        <field name="name">sms.gateway.form</field>
+        <field name="model">sms.gateway</field>
+        <field name="arch" type="xml">
+            <form string="SMS Gateway">
+                <sheet>
+                    <field name="module_id" invisible="1" />
+                    <field name="module_state" invisible="1" />
+                    <field name="image_128" widget="image" class="oe_avatar" />
+                    <widget name="web_ribbon" title="Disabled" bg_color="bg-danger" invisible="state != 'disabled'" />
+                    <widget name="web_ribbon" title="Test Mode" bg_color="bg-warning" invisible="state != 'test'" />
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Name" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group name="sms_gateway_state">
+                            <field name="gateway" invisible="1"/>
+                            <field name="gateway" groups="base.group_no_one" invisible="module_state != 'installed' or not module_id" />
+                            <field name="state" widget="radio" invisible="module_state == 'uninstalled'" />
+                            <field name="company_id" groups="base.group_multi_company" options='{"no_open":True}' />
+                        </group>
+                    </group>
+                    <notebook invisible="(module_state != 'installed' and not module_id) or state == 'disabled'">
+                        <page string="Credentials" name="sms_gateway_credentials" invisible="gateway == 'manual'">
+                            <group name="sms_gateway">
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="sms_gateway_kanban" model="ir.ui.view">
+        <field name="name">sms.gateway.kanban</field>
+        <field name="model">sms.gateway</field>
+        <field name="arch" type="xml">
+            <kanban create="false" quick_create="false" class="o_kanban_dashboard">
+                <field name="id" />
+                <field name="name" />
+                <field name="gateway" />
+                <field name="module_id" />
+                <field name="module_state" />
+                <field name="color" />
+                <field name="state" />
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <t t-set="installed" t-value="!record.module_id.value || (record.module_id.value &amp;&amp; record.module_state.raw_value === 'installed')"/>
+                        <t t-set="is_disabled" t-value="record.state.raw_value=='disabled'"/>
+                        <div t-attf-class="oe_kanban_global_click" class="d-flex p-2">
+                            <div class="o_payment_provider_desc d-flex gap-2">
+                                <img type="open"
+                                     t-att-src="kanban_image('sms.gateway', 'image_128', record.id.raw_value)"
+                                     class="mb-0 o_image_64_max"
+                                     alt="provider"/>
+                                <div class="d-flex flex-column justify-content-between w-100">
+                                    <div class="o_payment_kanban_info">
+                                        <h4 class="mb-0"><t t-esc="record.name.value"/></h4>
+                                        <t t-if="installed">
+                                            <field name="state"
+                                                   widget="label_selection"
+                                                   options="{'classes': {'enabled': 'success', 'test': 'warning', 'disabled' : 'light'}}"/>
+                                        </t>
+                                        <div t-if="!is_disabled" name='balance'/>
+                                        <div t-if="!is_disabled" name="send_quick_sms" class="mt4" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="sms_gateway_list" model="ir.ui.view">
+        <field name="name">sms.gateway.list</field>
+        <field name="model">sms.gateway</field>
+        <field name="arch" type="xml">
+            <tree string="SMS Gateways">
+                <field name="sequence" widget="handle" />
+                <field name="name" />
+                <field name="gateway" />
+                <field name="state" />
+                <field name="company_id" groups="base.group_multi_company" />
+            </tree>
+        </field>
+    </record>
+    <record id="sms_gateway_search" model="ir.ui.view">
+        <field name="name">sms.gateway.search</field>
+        <field name="model">sms.gateway</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Gateway" filter_domain="[('name', 'ilike', self)" />
+                <field name="gateway" />
+                <filter name="sms_gateway_installed" string="Installed" domain="[('gateway', '!=', 'manual')]" />
+                <group expand="0" string="Group By">
+                    <filter string="Gateway" name="gateway" domain="[]" context="{'group_by': 'gateway'}" />
+                    <filter string="State" name="state" domain="[]" context="{'group_by': 'state'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_sms_gateway" model="ir.actions.act_window">
+        <field name="name">SMS Gateways</field>
+        <field name="res_model">sms.gateway</field>
+        <field name='view_mode'>kanban,tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new SMS Gateway
+            </p>
+        </field>
+    </record>
+    <record id="action_send_custom_sms" model="ir.actions.act_window">
+        <field name="name">Send SMS</field>
+        <field name="res_model">send.custom.sms.wizard</field>
+        <field name='view_mode'>form</field>
+        <field name='target'>new</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create and send a SMS
+            </p>
+        </field>
+    </record>
+    <menuitem
+        id="root_sms_gateway_menu"
+        name="SMS Gateways"
+        sequence="2"
+        groups="base.group_system"
+        web_icon="sms_gateway_kanak,static/description/icon.png"/>
+    <menuitem
+        id='sms_gateway_menu'
+        action='action_sms_gateway'
+        parent='root_sms_gateway_menu'
+        groups="base.group_system"
+        sequence='1' />
+    <menuitem
+        id='send_custom_sms_menu'
+        action='action_send_custom_sms'
+        parent='root_sms_gateway_menu'
+        groups="base.group_system"
+        sequence='2' />
+    <menuitem
+        id="sms_config_menu"
+        name="Configuration"
+        parent="root_sms_gateway_menu"
+        groups="base.group_system"
+        sequence="10" />
+</odoo>

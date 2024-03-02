@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sms_marketing_form_view" model="ir.ui.view">
+        <field name="name">sms.marketing.form</field>
+        <field name="model">sms.marketing</field>
+        <field name="arch" type="xml">
+            <form string="SMS Marketing">
+                <header style="min-height:31px;">
+                    <button name="action_put_in_queue_sms" type="object" class="oe_highlight" string="Put in Queue" invisible="state in ['in_queue', 'done']" confirm="This will schedule an SMS marketing to all recipients. Do you still want to proceed ?"/>
+                    <button name="action_send_now_sms" type="object" string="Send Now" invisible="state == 'done'" confirm="This will send SMS to all recipients now. Do you still want to proceed ?"/>
+                    <button name="action_schedule" type="object" invisible="state in ['in_queue', 'done']" class="btn-secondary" string="Schedule"/>
+                    <field name="state" readonly="1" widget="statusbar"/>
+                    <button name="action_cancel" type="object" invisible="state != 'in_queue'" class="btn-secondary" string="Cancel"/>
+                    <button name="action_retry_failed" type="object" invisible="not failed or state != 'done'" class="oe_highlight" string="Retry"/>
+                    <field name="failed" invisible="1"/>
+                </header>
+                <div class="alert alert-info text-center" invisible="state != 'in_queue'" role="alert">
+                        <strong>
+                            <span name="next_departure_text">This SMS marketing is scheduled for </span>
+                            <field name="next_departure" class="oe_inline"/>.
+                        </strong>
+                    </div>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button
+                            name="action_view_sent"
+                            type='object'
+                            invisible="state in ['draft', 'test']"
+                            class="oe_stat_button">
+                            <field name="sent_ratio" string="Sent" widget="percentpie"/>
+                        </button>
+                        <button
+                            name="action_view_sending"
+                            type='object'
+                            invisible="state in ['draft', 'test']"
+                            class="oe_stat_button">
+                            <field name="sending_ratio" string="Sending" widget="percentpie"/>
+                        </button>
+                        <button
+                            name="action_view_failed"
+                            type='object'
+                            invisible="state in ['draft', 'test']"
+                            class="oe_stat_button">
+                            <field name="failed_ratio" string="Failed" widget="percentpie"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                    <group>
+                        <field name="active" invisible="1"/>
+                        <field name="name" readonly="state in ['sending', 'done']" />
+                        <field name="apply_on" readonly="state in ['sending', 'done']"/>
+                        <field name="sms_group" invisible="apply_on != 'sms_group'" required="apply_on == 'sms_group'" readonly="state in ['sending', 'done']" />
+                        <field name="model_id" options="{'no_create': True}" invisible="apply_on != 'model'" required="apply_on == 'model'" readonly="state in ['sending', 'done']" />
+                        <field name="model_name" invisible="1"/>
+                        <field name="model_real" invisible="1"/>
+                    </group>
+                    <div invisible="apply_on != 'model'">
+                        <field name="model_domain" widget="domain" options="{'model': 'model_real'}"
+                        readonly="state in ['sending', 'done']"/>
+                    </div>
+                    <notebook>
+                        <page string="SMS Body" name="sms_body">
+                            <label for="sms_template_id" invisible="not model_id" class="oe_edit_only" />
+                            <field name="sms_template_id" domain="[('model_id', '=', model_id)]" invisible="not model_id" readonly="state in ['sending', 'done']" />
+                            <field name="body" readonly="state in ['sending', 'done']"/>
+                            <group>
+                                <field name="sms_force_send" invisible="1"/>
+                            </group>
+                        </page>
+                        <page string="Settings">
+                            <group>
+                                <group>
+                                    <field name="user_id"/>
+                                    <field name="auto_delete" groups="base.group_no_one" readonly="state in ['sending', 'done']"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_sms_marketing_kanban" model="ir.ui.view">
+        <field name="name">sms.marketing.kanban</field>
+        <field name="model">sms.marketing</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" quick_create="false">
+                <field name='state' readonly="1"/>
+                <field name='user_id'/>
+                <field name='model_id'/>
+                <field name='model_name'/>
+                <field name='total'/>
+                <field name='color'/>
+                <field name='active'/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="{{!selection_mode ? 'oe_kanban_color_' + kanban_getcolor(record.color.raw_value) : ''}} oe_kanban_card oe_kanban_global_click oe_kanban_sms_marketing">
+                            <div class="o_dropdown_kanban dropdown" t-if="!selection_mode">
+                                <a role="button" class="dropdown-toggle o-no-caret btn" data-toggle="dropdown" href="#" data-display="static" aria-label="Dropdown menu" title="Dropdown menu">
+                                    <span class="fa fa-ellipsis-v"/>
+                                </a>
+                                <div class="dropdown-menu" role="menu">
+                                    <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                    <t t-if="widget.deletable">
+                                        <a role="menuitem" type="delete" class="dropdown-item">Delete</a>
+                                    </t>
+                                    <a role="menuitem" class="dropdown-item o_kanban_sms_marketing_active" name="toggle_active" type="object">
+                                        <t t-if="record.active.raw_value">Archive</t>
+                                        <t t-if="!record.active.raw_value">Restore</t>
+                                    </a>
+                                </div>
+                            </div>
+                             <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <div class="row"  invisible="not sent_date">
+                                            <h3 class="my-1 col-8 o_text_overflow">
+                                                <field name="name"/>
+                                            </h3>
+                                            <!-- <div class="progress border col-3 px-0 mt-2" style="background-color: inherit; height:12px;">
+                                                <div class="progress-bar" role="progressbar" 
+                                                    aria-valuemin="0"
+                                                    t-att-aria-valuenow="record.delivered.raw_value"
+                                                    t-att-aria-valuemax="record.expected.raw_value"
+                                                    t-attf-style="width: #{record.delivered.raw_value * 100 / record.expected.raw_value}%"/>
+                                            </div> -->
+                                        </div>
+                                        <h3 class="my-1 o_text_overflow"  invisible="not sent_date">
+                                            <field name="name"/>
+                                        </h3>
+                                        
+                                    </div>
+                                </div>
+                                <!-- <div class="o_kanban_record_body" t-if="!selection_mode" attrs="{'invisible': [('sent_date', '=', False)]}">
+                                    <div class="d-flex justify-content-between">
+                                        <div name="stat_opened">
+                                            <b><field name="opened_ratio" />%</b> Opened 
+                                        </div>
+                                        <div name="stat_replied">
+                                            <b><field name="replied_ratio" />%</b> Replied 
+                                        </div>
+                                        <div name="stat_clicks">
+                                            <b><field name="clicks_ratio" />%</b> Clicks 
+                                        </div>
+                                    </div>
+                                </div> -->
+                            </div>
+                            <div name="div_responsible_avatar">
+                                <span invisible="not sent_date">
+                                    <span class="fa fa-clock-o text-muted mr-2" title="Clock"/>
+                                    <field name="sent_date" widget="date"/>
+                                </span>
+                                <span invisible="sent_date" class="oe_clear text-muted">
+                                    <field name='total'/>
+                                    <field name='model_id' />
+                                </span>
+                                <img t-att-src="kanban_image('res.users', 'image_128', record.user_id.raw_value)" t-att-title="record.user_id.value" t-att-alt="record.user_id.value" class="o_image_24_cover oe_kanban_avatar float-right"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="sms_marketing_view_tree" model="ir.ui.view">
+        <field name="name">sms.marketing.view.tree</field>
+        <field name="model">sms.marketing</field>
+        <field name="arch" type="xml">
+            <tree string="SMS Marketing">
+                <field name="name" />
+            </tree>
+        </field>
+    </record>
+    <record id="sms_marketing_view_search" model="ir.ui.view">
+        <field name="name">sms.marketing.view.search</field>
+        <field name="model">sms.marketing</field>
+        <field name="arch" type="xml">
+            <search string="Search SMS Marketing">
+                <field name="name" />
+                <field name="user_id" string="Responsible"/>
+                <separator/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="sms_marketing_action" model="ir.actions.act_window">
+        <field name="name">SMS Marketing</field>
+        <field name="res_model">sms.marketing</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+    <menuitem id="sms_marketing_menu" name="SMS Marketing" parent="sms_gateway_kanak.root_sms_gateway_menu" sequence="4" action="sms_marketing_action" />
+</odoo>

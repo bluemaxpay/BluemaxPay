@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sms_group_form_view" model="ir.ui.view">
+        <field name="name">sms.group.form</field>
+        <field name="model">sms.group</field>
+        <field name="arch" type="xml">
+            <form string="SMS Group">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_recipients" type='object' class="oe_stat_button" icon="fa-user" invisible="recipient_type == 'odoo_contacts'">
+                            <field string="Recipients" name="recipients_count" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-user" invisible="recipient_type != 'odoo_contacts'">
+                            <field string="Recipients" name="recipients_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                     <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name" class="oe_inline"/></h1>
+                    </div>
+                    <group>
+                        <field name="active" invisible="1"/>
+                        <field name="recipient_type" widget='radio' />
+                    </group>
+                    <div invisible="recipient_type == 'odoo_contacts'">
+                        <span class='text-info'>NOTE: Other recipients means external contacts, they don't have any relation with odoo contacts.</span>
+                    </div>
+                    <div invisible="recipient_type == 'odoo_contacts'">
+                        <button name="action_open_recipients" type='object' string='Create/Import Other Recipients' icon="fa-arrow-right" class="oe_link" style="margin-left: -10px;" />
+                    </div>
+                    <separator string='Contacts' invisible="recipient_type != 'odoo_contacts'" />
+                    <field name="partner_ids" nolabel="1" invisible="recipient_type != 'odoo_contacts'" >
+                        <tree>
+                            <field name="name" />
+                            <field name="mobile" />
+                            <field name="email" />
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="sms_group_view_tree" model="ir.ui.view">
+        <field name="name">sms.group.view.tree</field>
+        <field name="model">sms.group</field>
+        <field name="arch" type="xml">
+            <tree string="SMS Group">
+                <field name="name" />
+            </tree>
+        </field>
+    </record>
+    <record id="sms_group_action" model="ir.actions.act_window">
+        <field name="name">SMS Group</field>
+        <field name="res_model">sms.group</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="sms_group_menu" name="SMS Group" parent="sms_gateway_kanak.sms_config_menu" sequence="2" action="sms_group_action" />
+    <record id="sms_recepient_form_view" model="ir.ui.view">
+        <field name="name">sms.recepient.form</field>
+        <field name="model">sms.recepient</field>
+        <field name="arch" type="xml">
+            <form string="SMS Recepient">
+                <sheet>
+                    <group>
+                        <field name="mobile" />
+                        <field name="name" />
+                        <field name="email" />
+                        <field name="sms_group_ids" widget="many2many_tags" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="sms_recepient_view_tree" model="ir.ui.view">
+        <field name="name">sms.recepient.view.tree</field>
+        <field name="model">sms.recepient</field>
+        <field name="arch" type="xml">
+            <tree string="SMS Recepient" editable="top">
+                <field name="mobile" />
+                <field name="name" />
+                <field name="email" />
+                <field name="sms_group_ids" widget="many2many_tags" />
+            </tree>
+        </field>
+    </record>
+    <record id="sms_recepient_action" model="ir.actions.act_window">
+        <field name="name">Other Recepient</field>
+        <field name="res_model">sms.recepient</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="sms_other_recipient_menu" name="Other Recipients" parent="sms_gateway_kanak.sms_config_menu" sequence="2" action="sms_recepient_action" />
+    <record id="view_partner_form_inh_sms_gateway" model="ir.ui.view">
+        <field name="name">res.partner.form.inh.sms_gateway</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="sms_group_ids" widget="many2many_tags" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

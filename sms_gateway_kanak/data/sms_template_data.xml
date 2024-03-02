@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="sms_tmpl_new_user" model="sms.gateway.template">
+            <field name="name">New User Creation</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">res.users</field>
+            <field name="flag">new_user</field>
+            <field name="body">Dear %name%
+Your account is activated !
+            </field>
+        </record>
+        <record id="sms_tmpl_quotation_acknowledgement" model="sms.gateway.template">
+            <field name="name">Quotation Acknowledgement</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">sale.order</field>
+            <field name="flag">quotation_acknowledgement</field>
+            <field name="body">Dear %partner_id.name%
+The Quote for your required products as been sent to your email address, request you to kindly check the same and revert us for further clarifications.
+            </field>
+        </record>
+        <record id="sms_tmpl_so_confirm" model="sms.gateway.template">
+            <field name="name">Sale Order Confirmation</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">sale.order</field>
+            <field name="flag">so_confirm</field>
+            <field name="body">Dear %partner_id.name%
+Your order %name% has been confirmed !
+            </field>
+        </record>
+        <record id="sms_tmpl_so_cancelled" model="sms.gateway.template">
+            <field name="name">Sale Order Cancellation</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">sale.order</field>
+            <field name="flag">so_cancel</field>
+            <field name="body">Dear %partner_id.name%
+Your order %name% has been cancelled !
+            </field>
+        </record>
+        <record id="sms_tmpl_inv_created" model="sms.gateway.template">
+            <field name="name">Invoice Creation</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">account.move</field>
+            <field name="flag">inv_created</field>
+            <field name="body">Dear %partner_id.name%
+Your invoice %name% has been created !
+            </field>
+        </record>
+        <record id="sms_tmpl_inv_payment_created" model="sms.gateway.template">
+            <field name="name">Invoice Payment Creation</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">account.move</field>
+            <field name="flag">inv_payment_created</field>
+            <field name="body">Dear %partner_id.name%
+Your invoice %name% has been paid successfully !
+            </field>
+        </record>
+        <record id="sms_tmpl_bill_created" model="sms.gateway.template">
+            <field name="name">Bill Creation</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">account.move</field>
+            <field name="flag">bill_created</field>
+            <field name="body">Dear %partner_id.name%
+Your vendor bill %name% has been created !
+            </field>
+        </record>
+        <record id="sms_tmpl_credit_note_created" model="sms.gateway.template">
+            <field name="name">Credit Note Creation</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">account.move</field>
+            <field name="flag">credit_note_created</field>
+            <field name="body">Dear %partner_id.name%
+Your credit note %name% has been created !
+            </field>
+        </record>
+        <record id="sms_tmpl_bill_refund_created" model="sms.gateway.template">
+            <field name="name">Bill Refund Creation</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">account.move</field>
+            <field name="flag">bill_refund_created</field>
+            <field name="body">Dear %partner_id.name%
+Your vendor bill refund %name% has been created !
+            </field>
+        </record>
+        <record id="sms_tmpl_payment_tx_created" model="sms.gateway.template">
+            <field name="name">Payment Transaction Creation</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">payment.transaction</field>
+            <field name="flag">payment_tx_created</field>
+            <field name="body">Dear %partner_id.name%
+Your payment has been done and your transaction reference is %acquirer_reference% !
+            </field>
+        </record>
+        <record id="sms_tmpl_picking_ready" model="sms.gateway.template">
+            <field name="name">Picking Ready</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">stock.picking</field>
+            <field name="flag">picking_ready</field>
+            <field name="body">Dear %partner_id.name%
+Your delivery order %name% is ready to ship !
+            </field>
+        </record>
+        <record id="sms_tmpl_picking_done" model="sms.gateway.template">
+            <field name="name">Picking Done</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">stock.picking</field>
+            <field name="flag">picking_done</field>
+            <field name="body">Dear %partner_id.name%
+Your delivery order %name% has been delivered successfully !
+            </field>
+        </record>
+        <record id="sms_tmpl_pos_order_creation" model="sms.gateway.template">
+            <field name="name">POS Order Creation</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">pos.order</field>
+            <field name="flag">pos_order_creation</field>
+            <field name="body">Dear %partner_id.name%
+Thank you for shppoing with %company_id.name%, your order reference number is %name%
+            </field>
+        </record>
+        <record id="sms_tmpl_event_registration" model="sms.gateway.template">
+            <field name="name">Event Registration</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">event.registration</field>
+            <field name="flag">event_registration</field>
+            <field name="body">Dear %partner_id.name%
+Your ticket has been confiremed for event %event_id.name% !
+            </field>
+        </record>
+        <record id="sms_tmpl_employee_birdthday" model="sms.gateway.template">
+            <field name="name">Employee Birthday</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">hr.employee</field>
+            <field name="flag">employee_birdthday</field>
+            <field name="body">Dear %name%
+"Happy Birthday :-)"
+"Wishing you a day full of laughter and happiness and a year that brings you much success !"
+            </field>
+        </record>
+        <record id="sms_tmpl_employee_payslip_paid" model="sms.gateway.template">
+            <field name="name">Employee Payslip Paid</field>
+            <field name="active" eval="False"/>
+            <field name="model_flag">hr.payslip</field>
+            <field name="flag">employee_payslip_paid</field>
+            <field name="body">Dear %name%
+Your salary from %date_from% to %date_to% has been credited !
+            </field>
+        </record>
+    </data>
+</odoo>
