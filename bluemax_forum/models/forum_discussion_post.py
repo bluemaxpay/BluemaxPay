@@ -110,7 +110,7 @@ class Post(models.Model):
         }
 
         domain = website.website_domain()
-        domain = expression.AND([domain, [('state', '=', 'active')]])
+        # domain = expression.AND([domain, [('state', '=', 'active')]])
         domain = expression.AND([domain, [('parent_id', '=', False)]])
         forum = options.get('forum')
         create_uid = options.get('create_uid', False) 

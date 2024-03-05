@@ -160,8 +160,8 @@
                         <thead>
                         <tr>
                           <th>Subject</th>
-                          <th>Opened By</th>
                           <th>Last Post</th>
+                          <th>Opened By</th>
                           <th>Reply</th>
                           <th>Viewed</th>
                         </tr>
@@ -169,19 +169,6 @@
                         <tbody>
                             <tr t-foreach="question_ids" t-as="question_id">
                               <td><a t-attf-href="/discussion/forum/#{slug(question_id.forum_id)}/#{slug(question_id)}"><t t-esc="question_id.name"/></a></td>
-                              <td>
-                                  <div class="d-flex flex-column small">
-                                    <a t-attf-href="/forum/user/info/#{question_id.create_uid.sudo().id}">
-                                        <t t-esc="question_id.create_uid.sudo().name"/>
-                                    </a>
-                                   </div>
-                                   <t t-if="website.get_user_rank_logs(question_id.create_uid.sudo()) and not question_id.create_uid.sudo().has_group('bluemax_forum.group_moderator')">
-                                     <img t-att-src="website.get_user_rank_logs(question_id.create_uid.sudo())" style="max-height:22px;"/>
-                                   </t>
-                                   <t t-if="question_id.create_uid.sudo().has_group('bluemax_forum.group_moderator')">
-                                      <b><i>Moderator</i></b>
-                                   </t>
-                              </td>
                               <td>
                                   <div class="d-flex flex-column small">
                                      <span>Last reply by <t t-esc="question_id.last_reply_uid.sudo().name"/> on</span>
@@ -194,6 +181,19 @@ I agree. The article is about midget racing and how the numbers don't really pan
 <img src="/bluemax_forum/static/src/img/lastPost.gif" border="0"/></a>
                                     </span>
                                   </div>
+                              </td>
+                              <td>
+                                  <div class="d-flex flex-column small">
+                                    <a t-attf-href="/forum/user/info/#{question_id.create_uid.sudo().id}">
+                                        <t t-esc="question_id.create_uid.sudo().name"/>
+                                    </a>
+                                   </div>
+                                   <t t-if="website.get_user_rank_logs(question_id.create_uid.sudo()) and not question_id.create_uid.sudo().has_group('bluemax_forum.group_moderator')">
+                                     <img t-att-src="website.get_user_rank_logs(question_id.create_uid.sudo())" style="max-height:22px;"/>
+                                   </t>
+                                   <t t-if="question_id.create_uid.sudo().has_group('bluemax_forum.group_moderator')">
+                                      <b><i>Moderator</i></b>
+                                   </t>
                               </td>
                               <td><t t-esc="len(question_id.child_ids)"/></td>
                               <td><t t-esc="question_id.views"/></td>
@@ -294,6 +294,9 @@ I agree. The article is about midget racing and how the numbers don't really pan
                                     <div class="tmplsds d-md-inline">
                                         <button class="btn btn-secondary mx-4 reply_post_msg" t-att-data-partner_id="question.create_uid.sudo().partner_id.id" t-att-data-user_id="question.create_uid.sudo().id" t-att-data-question_post_id="question.id" t-if="question.state != 'close'">
                                            Post Reply   
+                                        </button>
+                                        <button class="btn btn-secondary mx-4" t-if="question.state == 'close'">
+                                           This post is closed   
                                         </button>
                                         <div class="oe_inline_follow_button">
                                             <t t-if="question.state == 'active'" t-call="bluemax_forum.follow">
@@ -541,6 +544,9 @@ I agree. The article is about midget racing and how the numbers don't really pan
                             <br/>
                             <button class="btn btn-primary reply_post_msg" t-att-data-partner_id="question.create_uid.sudo().partner_id.id" t-att-data-user_id="question.create_uid.sudo().id" t-att-data-question_post_id="question.id" t-if="question.state != 'close'">
                                Post Reply   
+                            </button>
+                            <button class="btn btn-primary" t-if="question.state == 'close'">
+                               This post is closed   
                             </button>
                             <br/>
                             <br/>

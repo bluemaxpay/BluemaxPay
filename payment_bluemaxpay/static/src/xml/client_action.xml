@@ -1,27 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
     <t t-name="payment_bluemaxpay.client_action.DatePickerPopup">
-        <div>
+        <Dialog bodyClass="'d-flex flex-column'" contentClass="'saleMSPLauchProcurement'" size="'sm'" title="title">
             <label for="start-date">Start Date :</label>
-            <input type="date" class="start-date" style="border-radius: 10px;text-align: center;font-weight: bold;background: #f0dcff;margin-left: 10px;border: 2px solid black"/>
+            <input type="date" class="start-date" style="border-radius: 10px;text-align: center;font-weight: bold;background: #f0dcff;margin-left: 10px;border: 2px solid black" />
             <br />
             <br />
             <label for="end-date">End Date :</label>
-            <input type="date" class="end-date" style="border-radius: 10px;text-align: center;font-weight: bold;background: #f0dcff;margin-left: 10px;border: 2px solid black"/>
-        </div>
-    </t>
-    <t t-name="payment_bluemaxpay.client_action.ControlButtons">
-        <div class="d-flex">
-            <div class="o_report_buttons justify-content-right">
-                <button type="button" class="btn btn-primary o_group_by_month" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;font:normal normal normal 14px/1 FontAwesome;height:100%;border-radius:3px;margin-right:8px;border:1px solid black;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'">Group by Month</button>
-                <button type="button" class="btn btn-primary o_group_by_week" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;font:normal normal normal 14px/1 FontAwesome;height:100%;border-radius:3px;margin-right:8px;border:1px solid black;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'">Group by Week</button>
-                <button type="button" class="btn btn-primary o_group_by_day" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;font:normal normal normal 14px/1 FontAwesome;height:100%;border-radius:3px;margin-right:8px;border:1px solid black;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'">Group by Day</button>
-                <button type="button" class="btn btn-primary o_group_by_year" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;font:normal normal normal 14px/1 FontAwesome;height:100%;border-radius:3px;margin-right:8px;border:1px solid black;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'">Group by Year</button>
-            </div>
-            <div class="o_report_buttons justify-content-right" style="margin-left: 0.3rem;justify-content:right;" t-on-click="on_click_report">
-                <button type="button" class="btn btn-primary o_download_report fa fa-upload" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;border-radius:3px;margin-right:8px;border:1px solid black;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'"> Export Report</button>
-            </div>
-        </div>
+            <input type="date" class="end-date" style="border-radius: 10px;text-align: center;font-weight: bold;background: #f0dcff;margin-left: 10px;border: 2px solid black" />
+            <t t-set-slot="footer">
+                <button class="btn btn-primary" t-on-click="props.onExportConfirm">
+                    Export
+                </button>
+                <button class="btn btn-secondary" t-on-click="props.close">
+                    Cancel
+                </button>
+            </t>
+        </Dialog>
     </t>
     <t t-name="payment_bluemaxpay.client_action.ControlButtonsPivot">
         <div class="o_report_buttons" style="margin-left: 1rem">
@@ -32,9 +27,24 @@
         </div>
     </t>
     <t t-name="global_report">
+        <div class="d-flex" style="margin: 14px">
+            <div class="o_report_buttons justify-content-right">
+                <button type="button" class="btn btn-primary o_group_by_month" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;font:normal normal normal 17px/1 FontAwesome;height:100%;border-radius:3px;margin-right:8px;border:1px solid black;font-weight: 500;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'" t-on-click="_onClickGroupByMonth">Group by Month</button>
+                <button type="button" class="btn btn-primary o_group_by_day" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;font:normal normal normal 17px/1 FontAwesome;height:100%;border-radius:3px;margin-right:8px;border:1px solid black;font-weight: 500;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'" t-on-click="_onClickGroupByDay">Group by Day</button>
+                <button type="button" class="btn btn-primary o_group_by_year" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;font:normal normal normal 17px/1 FontAwesome;height:100%;border-radius:3px;margin-right:8px;border:1px solid black;font-weight: 500;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'" t-on-click="_onClickGroupByYear">Group by Year</button>
+            </div>
+            <div class="o_report_buttons justify-content-right" style="margin-left: 0.3rem;justify-content:right;">
+                <button type="button" class="btn btn-primary o_download_report fa fa-upload" style="transition: background-color 0.3s ease;background-color:#f0dcff;color:black;border-radius:3px;margin-right:8px;border:1px solid black;font-weight: 500;font:normal normal normal 17px/1 FontAwesome;" onmouseover="this.style.backgroundColor='black';this.style.color='white';" onmouseout="this.style.backgroundColor='#f0dcff';this.style.color='black'" t-on-click="_onClickExportReport"> Export Report</button>
+            </div>
+        </div>
         <div class="o_report">
-            <t t-set="bmPeriods" t-value="widget.bmPeriods" />
-            <t t-set="bluemaxpay_transactions" t-value="widget.bluemaxpay_transactions" />
+            <t t-set="bmPeriods" t-value="state.bmPeriods" />
+            <t t-set="bluemaxpay_transactions" t-value="state.bluemaxpay_transactions" />
+            <t t-set="results_months" t-value="state.results_months" />
+            <t t-set="results_days" t-value="state.results_days" />
+            <t t-set="results_years" t-value="state.results_years" />
+            <t t-set="sum" t-value="state.sum" />
+            <t t-set="groupby" t-value="state.groupby" />
             <div class="text-nowrap mr0 ml0">
                 <table class="table bm_table">
                     <t t-call="bm_report_detailed" />
@@ -54,7 +64,7 @@
     <t t-name="bm_report_detailed">
         <thead class="thead-light bm_report_header" style="background: linear-gradient(45deg, #f0dcff, #ffddfa);border:1px solid black;">
             <tr>
-                <th>
+                <th style="font-weight: bolder;">
                     <span>
                     </span>
                 </th>
@@ -92,46 +102,233 @@
                 </th>
             </tr>
         </thead>
-        <t t-foreach="bluemaxpay_transactions" t-as="record">
-            <tbody class="o_mps_content bm_report_content" style="border: 0px;">
-                <tr class="bg-light">
-                    <th scope="col" style="background-color: white">
-                        <a href="#" class="o_report_record_url" t-att-data-res-id="record.data_id" t-att-data-model="record.data_model">
-                            <span><i class="fa fa-arrow-right"></i></span>
-                        </a>
-                    </th>
-                    <th scope="col" style="background-color: white" t-att-value="record.name">
-                        <a href="#" class="o_report_record_url" t-att-data-res-id="record.name_id" t-att-data-model="record.name_model">
-                            <t t-esc="record.name" />
-                        </a>
-                    </th>
-                    <th scope="col" style="background-color: white" t-att-value="record.partner_id">
-                        <a href="#" class="o_report_record_url" t-att-data-res-id="record.customer_id" t-att-data-model="'res.partner'">
-                            <t t-esc="record.partner_id" />
-                        </a>
-                    </th>
-                    <th scope="col" style="background-color: white" t-att-value="record.amount">
-                        <t t-esc="record.amount" />
-                    </th>
-                    <th scope="col" style="background-color: white" t-att-value="record.date">
-                        <t t-esc="record.date" />
-                    </th>
-                    <th scope="col" style="background-color: white" t-att-value="record.reference">
-                        <t t-esc="record.reference" />
-                    </th>
-                    <th scope="col" style="background-color: white" t-att-value="record.transaction_id">
-                        <a href="#" class="o_report_record_url" t-att-data-res-id="record.id_transaction" t-att-data-model="transaction_model">
-                            <t t-esc="record.transaction_id" />
-                        </a>
-                    </th>
-                    <th scope="col" style="background-color: white" t-att-value="record.state">
-                        <t t-esc="record.state" />
-                    </th>
-                    <th scope="col" style="background-color: white" t-att-value="record.transaction_type">
-                        <t t-esc="record.transaction_type" />
-                    </th>
+        <t t-if="groupby == 'month'">
+            <t t-foreach="results_months" t-as="results" t-key="results.id">
+                <thead style="cursor: pointer;background: linear-gradient(45deg, #bfbfff3d, #e9e1ff);border: 1px solid black;">
+                    <tr class="o_month_click" t-on-click="_onClickMonth">
+                        <th colspan="3" style="font-weight: bolder;">
+                            <span>
+                                Month :
+                                <t t-esc="results.month" /></span>
+                        </th>
+                        <th colspan="6" style="font-weight: bolder;">
+                            <span>
+                                Total :
+                                <t t-esc="results.totalAmount" /></span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="o_mps_content bm_report_content" style="border: 0px;">
+                    <t t-foreach="results.records" t-as="record" t-key="record.id">
+                        <tr class="bg-light month-record d-none">
+                            <th scope="col" style="background-color: white">
+                                <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.data_id" t-att-data-model="record.data_model">
+                                    <span><i class="fa fa-arrow-right"></i></span>
+                                </a>
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.name">
+                                <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.name_id" t-att-data-model="record.name_model">
+                                    <t t-esc="record.name" />
+                                </a>
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.partner_id">
+                                <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.customer_id" t-att-data-model="'res.partner'">
+                                    <t t-esc="record.partner_id" />
+                                </a>
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.amount">
+                                <t t-esc="record.amount" />
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.date">
+                                <t t-esc="record.date" />
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.reference">
+                                <t t-esc="record.reference" />
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.transaction_id">
+                                <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.id_transaction" t-att-data-model="record.transaction_model">
+                                    <t t-esc="record.transaction_id" />
+                                </a>
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.state">
+                                <t t-esc="record.state" />
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.transaction_type">
+                                <t t-esc="record.transaction_type" />
+                            </th>
+                        </tr>
+                    </t>
+                </tbody>
+            </t>
+        </t>
+        <t t-elif="groupby == 'day'">
+            <t t-foreach="results_days" t-as="results" t-key="results.id">
+                <thead style="cursor: pointer;background: linear-gradient(45deg, #bfbfff3d, #e9e1ff);border: 1px solid black;">
+                    <tr class="o_day_click" t-on-click="_onClickDay">
+                        <th colspan="3" style="font-weight: bolder;">
+                            <span>
+                                Day :
+                                <t t-esc="results.day" /></span>
+                        </th>
+                        <th colspan="6" style="font-weight: bolder;">
+                            <span>
+                                Total :
+                                <t t-esc="results.totalAmount" /></span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="o_mps_content bm_report_content" style="border: 0px;">
+                    <t t-foreach="results.records" t-as="record" t-key="record.id">
+                        <tr class="bg-light day-record d-none">
+                            <th scope="col" style="background-color: white">
+                                <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.data_id" t-att-data-model="record.data_model">
+                                    <span><i class="fa fa-arrow-right"></i></span>
+                                </a>
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.name">
+                                <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.name_id" t-att-data-model="record.name_model">
+                                    <t t-esc="record.name" />
+                                </a>
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.partner_id">
+                                <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.customer_id" t-att-data-model="'res.partner'">
+                                    <t t-esc="record.partner_id" />
+                                </a>
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.amount">
+                                <t t-esc="record.amount" />
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.date">
+                                <t t-esc="record.date" />
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.reference">
+                                <t t-esc="record.reference" />
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.transaction_id">
+                                <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.id_transaction" t-att-data-model="record.transaction_model">
+                                    <t t-esc="record.transaction_id" />
+                                </a>
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.state">
+                                <t t-esc="record.state" />
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.transaction_type">
+                                <t t-esc="record.transaction_type" />
+                            </th>
+                        </tr>
+                    </t>
+                </tbody>
+            </t>
+        </t>
+        <t t-elif="groupby == 'year'">
+            <t t-foreach="results_years" t-as="results" t-key="results.id">
+                <thead style="cursor: pointer;background: linear-gradient(45deg, #bfbfff3d, #e9e1ff);border: 1px solid black;">
+                    <tr class="o_year_click" t-on-click="_onClickYear">
+                        <th colspan="3" style="font-weight: bolder;">
+                            <span>
+                                Year :
+                                <t t-esc="results.year" /></span>
+                        </th>
+                        <th colspan="6" style="font-weight: bolder;">
+                            <span>Total :
+                                <t t-esc="results.totalAmount" /></span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="o_mps_content bm_report_content" style="border: 0px;">
+                    <t t-foreach="results.records" t-as="record" t-key="record.id">
+                        <tr class="bg-light year-record d-none">
+                            <th scope="col" style="background-color: white">
+                                <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.data_id" t-att-data-model="record.data_model">
+                                    <span><i class="fa fa-arrow-right"></i></span>
+                                </a>
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.name">
+                                <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.name_id" t-att-data-model="record.name_model">
+                                    <t t-esc="record.name" />
+                                </a>
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.partner_id">
+                                <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.customer_id" t-att-data-model="'res.partner'">
+                                    <t t-esc="record.partner_id" />
+                                </a>
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.amount">
+                                <t t-esc="record.amount" />
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.date">
+                                <t t-esc="record.date" />
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.reference">
+                                <t t-esc="record.reference" />
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.transaction_id">
+                                <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.id_transaction" t-att-data-model="record.transaction_model">
+                                    <t t-esc="record.transaction_id" />
+                                </a>
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.state">
+                                <t t-esc="record.state" />
+                            </th>
+                            <th scope="col" style="background-color: white" t-att-value="record.transaction_type">
+                                <t t-esc="record.transaction_type" />
+                            </th>
+                        </tr>
+                    </t>
+                </tbody>
+            </t>
+        </t>
+        <t t-else="">
+            <t t-foreach="bluemaxpay_transactions" t-as="record" t-key="record.id">
+                <tbody class="o_mps_content bm_report_content" style="border: 0px;">
+                    <tr class="bg-light">
+                        <th scope="col" style="background-color: white">
+                            <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.data_id" t-att-data-model="record.data_model">
+                                <span><i class="fa fa-arrow-right"></i></span>
+                            </a>
+                        </th>
+                        <th scope="col" style="background-color: white" t-att-value="record.name">
+                            <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.name_id" t-att-data-model="record.name_model">
+                                <t t-esc="record.name" />
+                            </a>
+                        </th>
+                        <th scope="col" style="background-color: white" t-att-value="record.partner_id">
+                            <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.customer_id" t-att-data-model="'res.partner'">
+                                <t t-esc="record.partner_id" />
+                            </a>
+                        </th>
+                        <th scope="col" style="background-color: white" t-att-value="record.amount">
+                            <t t-esc="record.amount" />
+                        </th>
+                        <th scope="col" style="background-color: white" t-att-value="record.date">
+                            <t t-esc="record.date" />
+                        </th>
+                        <th scope="col" style="background-color: white" t-att-value="record.reference">
+                            <t t-esc="record.reference" />
+                        </th>
+                        <th scope="col" style="background-color: white" t-att-value="record.transaction_id">
+                            <a href="#" t-on-click="_onClickRecordLink" class="o_report_record_url" t-att-data-res-id="record.id_transaction" t-att-data-model="record.transaction_model">
+                                <t t-esc="record.transaction_id" />
+                            </a>
+                        </th>
+                        <th scope="col" style="background-color: white" t-att-value="record.state">
+                            <t t-esc="record.state" />
+                        </th>
+                        <th scope="col" style="background-color: white" t-att-value="record.transaction_type">
+                            <t t-esc="record.transaction_type" />
+                        </th>
+                    </tr>
+                </tbody>
+            </t>
+            <tfoot>
+                <tr>
+                    <td colspan="3" style="background-color: white"></td>
+                    <td style="background-color: white; font-weight: bold;">Total :
+                        <t t-esc="sum" />
+                    </td>
+                    <td colspan="4" style="background-color: white"></td>
                 </tr>
-            </tbody>
+            </tfoot>
         </t>
     </t>
 </templates>

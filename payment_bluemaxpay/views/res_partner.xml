@@ -9,10 +9,13 @@
                 <notebook position="inside">
                     <page string="Saved Card" name="saved_card">
                         <field name="bluemax_partner_ids">
+                            <!-- <tree create="false"> -->
                             <tree>
                                 <field name="name" />
                                 <field name="token" />
                                 <field name="partner_id" />
+                                <field name="exp_month" />
+                                <field name="exp_year" />
                                 <field name="active" />
                             </tree>
                         </field>

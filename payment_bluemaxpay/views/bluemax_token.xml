@@ -30,6 +30,14 @@
                             <field name="customer_country_id" />
                         </group>
                     </group>
+                    <group string="Card Expiry Details" invisible="token == ''">
+                        <group>
+                            <field name="exp_month" readonly="true"/>
+                        </group>
+                        <group>
+                            <field name="exp_year" readonly="true"/>
+                        </group>
+                    </group>
                 </sheet>
             </form>
         </field>
@@ -47,6 +55,8 @@
             <tree>
                 <field name="name" />
                 <field name="partner_id" />
+                <field name="exp_month" />
+                <field name="exp_year" />
             </tree>
         </field>
     </record>

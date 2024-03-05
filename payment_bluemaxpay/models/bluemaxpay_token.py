@@ -15,8 +15,8 @@ class BlueMaxPayToken(models.TransientModel):
     name = fields.Char('Card Holder Name')
     token_id = fields.Many2one('bluemax.token')
     number = fields.Char('Card Number', size=16)
-    exp_month = fields.Char('Exp Month', size=2)
-    exp_year = fields.Char('Exp Year', size=4)
+    exp_month = fields.Char('Exp Month', size=2,related='token_id.exp_month',store=True, readonly=False)
+    exp_year = fields.Char('Exp Year', size=4,related='token_id.exp_year',store=True, readonly=False)
     partner_id = fields.Many2one('res.partner', related='token_id.partner_id')
     card_type = fields.Selection(string="Card Type",
                                  selection=[('am_express', 'American Express'), ('other', 'Other'), ], required=False,

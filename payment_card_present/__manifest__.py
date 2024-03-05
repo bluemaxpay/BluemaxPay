@@ -6,7 +6,7 @@
     'author': "BlueMax Pay",
     'summary': 'Payment Acquirer: BlueMax Pay Implementation',
     'description': """BlueMax Pay Payment Acquirer: Payment""",
-    'depends': ['account', 'invoice_card_present'],
+    'depends': ['account', 'payment_bluemaxpay'],
     'images': [],
     'data': [
             'security/ir.model.access.csv',

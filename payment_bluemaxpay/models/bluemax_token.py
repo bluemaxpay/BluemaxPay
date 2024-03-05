@@ -10,6 +10,9 @@ class BlueMaxPayToken(models.Model):
     partner_id = fields.Many2one('res.partner', required=True)
     active = fields.Boolean(default=True)
 
+    exp_month= fields.Char('Exp Month', size=2, readonly=False, store=True)
+    exp_year = fields.Char('Exp Year', size=4, readonly=False, store=True)
+
     country_id = fields.Many2one(
         comodel_name='res.country', string='Country')
     customer_country_id = fields.Many2one(

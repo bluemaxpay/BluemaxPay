@@ -64,20 +64,23 @@ class SaleOrderPayment(models.Model):
     @api.onchange('partner_id_child_ids')
     def onchange_partner_id_child_ids(self):
         if self.partner_id_child_ids:
-            self.customer_country_id = self.partner_id_child_ids.country_id.id
+            if self.partner_id_child_ids.country_id:
+                self.customer_country_id = self.partner_id_child_ids.country_id.id
             self.customer_state_id = self.partner_id_child_ids.state_id.id
             self.customer_city = self.partner_id_child_ids.city
             self.customer_street = self.partner_id_child_ids.street
             self.customer_zip = self.partner_id_child_ids.zip
         else:
             if self.sale_id.partner_shipping_id:
-                self.customer_country_id = self.sale_id.partner_shipping_id.country_id.id,
+                if self.sale_id.partner_shipping_id.country_id:
+                    self.customer_country_id = self.sale_id.partner_shipping_id.country_id.id,
                 self.customer_state_id = self.sale_id.partner_shipping_id.state_id.id
                 self.customer_city = self.sale_id.partner_shipping_id.city
                 self.customer_street = self.sale_id.partner_shipping_id.street
                 self.customer_zip = self.sale_id.partner_shipping_id.zip
             else:
-                self.customer_country_id = self.sale_id.partner_id.country_id.id,
+                if self.sale_id.partner_id.country_id:
+                    self.customer_country_id = self.sale_id.partner_id.country_id.id,
                 self.customer_state_id = self.sale_id.partner_id.state_id.id
                 self.customer_city = self.sale_id.partner_id.city
                 self.customer_street = self.sale_id.partner_id.street

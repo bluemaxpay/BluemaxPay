@@ -39,6 +39,7 @@ class BluemaxpayXlsxExport(http.Controller):
         bold_center_align = workbook.add_format(
             {'align': 'center', 'bold': True})
         row = 0
+        total = 0.0
         for tr in jdata:
             if tr[4] == 'Date' or startDate <= tr[4][:-9] <= endDate:
                 col = 0
@@ -63,13 +64,19 @@ class BluemaxpayXlsxExport(http.Controller):
                                 col += 2
                             else:
                                 worksheet.merge_range(
-                                    row, col, row, col + 1, int(float(th)), left_align)
+                                    row, col, row, col + 1, float(th), left_align)
                                 col += 2
                         else:
                             worksheet.merge_range(
                                 row, col, row, col + 1, th, left_align)
                             col += 2
+                if row:
+                    total += float(tr[3])
+
                 row += 1
+
+        total = "Total : " + str(total)
+        worksheet.merge_range(row + 1, 4, row + 1, 5, total, bold_center_align)
 
         workbook.close()
         xlsx_data = output.getvalue()

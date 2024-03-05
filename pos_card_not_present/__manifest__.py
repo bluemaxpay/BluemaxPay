@@ -1,5 +1,5 @@
 {
-    'name': 'BlueMax Pay Card Not Present',
+    'name': 'BlueMax Pay POS Card Not Present',
     'version': '17.0.1.0',
     'category': 'Sales/Point Of Sale',
     'sequence': 20,

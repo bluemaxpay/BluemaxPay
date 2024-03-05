@@ -43,20 +43,23 @@ class BlueMaxPayPayment(models.Model):
         payment = self.env['account.payment'].browse(
             self.env.context.get('active_ids'))
         if self.partner_id_child_ids:
-            self.customer_country_id = self.partner_id_child_ids.country_id.id
+            if self.partner_id_child_ids.country_id:
+                self.customer_country_id = self.partner_id_child_ids.country_id.id
             self.customer_state_id = self.partner_id_child_ids.state_id.id
             self.customer_city = self.partner_id_child_ids.city
             self.customer_street = self.partner_id_child_ids.street
             self.customer_zip = self.partner_id_child_ids.zip
         else:
             if payment.partner_shipping_id:
-                self.customer_country_id = payment.partner_shipping_id.country_id.id,
+                if payment.partner_shipping_id.country_id:
+                    self.customer_country_id = payment.partner_shipping_id.country_id.id,
                 self.customer_state_id = payment.partner_shipping_id.state_id.id
                 self.customer_city = payment.partner_shipping_id.city
                 self.customer_street = payment.partner_shipping_id.street
                 self.customer_zip = payment.partner_shipping_id.zip
             else:
-                self.customer_country_id = payment.partner_id.country_id.id,
+                if payment.partner_id.country_id:
+                    self.customer_country_id = payment.partner_id.country_id.id,
                 self.customer_state_id = payment.partner_id.state_id.id
                 self.customer_city = payment.partner_id.city
                 self.customer_street = payment.partner_id.street

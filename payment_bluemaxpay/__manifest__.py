@@ -21,14 +21,15 @@
         'views/sale_order_payment.xml',
         'views/sale_order_capture.xml',
         'views/res_partner.xml',
-        # 'views/global_bluemaxpay_report.xml',
+        'views/global_bluemaxpay_report.xml',
         'data/payment_provider_data.xml',
     ],
     'assets': {
         'web.assets_backend': [
             'payment_bluemaxpay/static/src/scss/backend.scss',
-            # 'payment_bluemaxpay/static/src/js/client_action.js',
-            # 'payment_bluemaxpay/static/src/xml/client_action.xml',
+            'payment_bluemaxpay/static/src/js/ExportDialog.js',
+            'payment_bluemaxpay/static/src/js/client_action.js',
+            'payment_bluemaxpay/static/src/xml/client_action.xml',
             'https://api2.heartlandportico.com/SecureSubmit.v1/token/gp-1.0.1/globalpayments.js',
 
         ],

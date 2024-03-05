@@ -113,7 +113,7 @@ export class PaymentCardPresent extends PaymentInterface {
         var commercialInformation = {};
         var motoEcommerce = {};
         var additionalInformation = {};
-        amountInformation.TransactionAmount = parseInt(amount * 100);
+        amountInformation.TransactionAmount = Math.round(amount * 100);
         amountInformation.TipAmount = parseInt(tip * 100);
         amountInformation.CashBackAmount = parseInt(cashback * 100);
         amountInformation.MerchantFee = parseInt(fee * 100);
