@@ -50,7 +50,7 @@ class Post(models.Model):
     last_reply_uid = fields.Many2one('res.users', string="Last Reply user")
     reply_parent_id = fields.Many2one(
         'discussion.forum.post', string='Reply Parent')
-    anchor = fields.Datetime(string="Anchor", default=fields.Datetime.now)
+    anchor = fields.Datetime(string="Anchor", default=False)
     closed_uid = fields.Many2one('res.users', string='Closed by', readonly=True, copy=False)
     closed_date = fields.Datetime('Closed on', readonly=True, copy=False)
 
@@ -78,6 +78,10 @@ class Post(models.Model):
     def _update_anchor_post(self):
         self.ensure_one()
         return self.with_user(SUPERUSER_ID).write({'anchor': fields.Datetime.now()})
+
+    def _update_unanchor_post(self):
+        self.ensure_one()
+        return self.with_user(SUPERUSER_ID).write({'anchor': False})
 
     def _set_viewed(self):
         self.ensure_one()

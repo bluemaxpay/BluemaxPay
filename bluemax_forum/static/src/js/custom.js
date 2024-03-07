@@ -15,6 +15,7 @@ publicWidget.registry.websiteDiscussionForum = publicWidget.Widget.extend({
         'click .reply_post_msg': 'OnPostReplyMsg',
         'click .o_wforum_discard_btn': 'remove_popup_class',
         'click .anchor_post_msg_cl': 'OnClickAnchor',
+        'click .unanchor_post_msg_cl': 'OnClickunAnchor',
         'click .edit_post_msg_cl': 'OnClickEditPost',
         'click .delete_post_msg_cl': 'OnDeletePost'
     },
@@ -116,6 +117,19 @@ publicWidget.registry.websiteDiscussionForum = publicWidget.Widget.extend({
             this.notification.add(_t("Anchor successfully"), {
                 type: "success",
             });
+            window.location.reload();
+        });
+    },
+    OnClickunAnchor: function(ev){
+        var self = this;
+        var post_id = parseInt($(ev.currentTarget).data('question_post_id'), 10);
+        this.rpc("/discussion/forum/post/unanchor", {
+            post_id: post_id
+        }).then((data)=>{
+            this.notification.add(_t("unAnchor successfully"), {
+                type: "success",
+            });
+            window.location.reload();
         });
     },
     OnClickEditPost: function(ev){

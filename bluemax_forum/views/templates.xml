@@ -388,9 +388,11 @@ I agree. The article is about midget racing and how the numbers don't really pan
                                                     <tr>
                                                        <td>
                                                           <a href="#" class="reply_post_msg" t-att-data-partner_id="question.create_uid.sudo().partner_id.id" t-att-data-user_id="question.create_uid.sudo().id" t-att-data-question_post_id="question.id" t-att-data-reply_post_id="question.id" t-if="question.state != 'close'">Reply</a>
-                                                          <t t-if="question.state != 'close' and user.has_group('bluemax_forum.group_moderator')">
-                                                            |
-                                                              <a href="#" class="anchor_post_msg_cl" t-att-data-question_post_id="question.id">Anchor</a>
+                                                          <t t-if="question and user.has_group('bluemax_forum.group_moderator')">
+                                                            <t t-if="question.state != 'close'">|</t>
+                                                            <a href="#" class="anchor_post_msg_cl" t-att-data-question_post_id="question.id" t-if="not question.anchor">Anchor</a>
+                                                            <a href="#" class="unanchor_post_msg_cl" t-att-data-question_post_id="question.id" t-if="question.anchor">unAnchor</a>
+                                                            <t t-if="question.state == 'close'">|</t>
                                                           </t>
                                                           <t t-if="question.state != 'close' and user.has_group('bluemax_forum.group_moderator')">
                                                               |

@@ -139,7 +139,7 @@ class WebsiteDiscussionForum(http.Controller):
                 sorting = False
 
         if not sorting:
-            sorting = 'anchor desc, create_date desc'
+            sorting = 'anchor asc, create_date desc'
 
         options = self._get_forum_post_search_options(
             forum=forum,
@@ -342,6 +342,19 @@ class WebsiteDiscussionForum(http.Controller):
         uid = user.id
         question = request.env['discussion.forum.post'].search([('id', '=', int(post_id))])
         question._update_anchor_post()
+        return {
+            'success':True
+        }
+
+    @http.route(['/discussion/forum/post/unanchor'], type="json", auth="user", methods=['POST'], website=True)
+    def unanchore_post(self, post_id=None, **kw):
+        if not request.env.user.has_group('bluemax_forum.group_moderator'):
+            raise AccessError(_('Opps! Only Moderator can unanchor post'))
+        values = {}
+        user = request.env.user
+        uid = user.id
+        question = request.env['discussion.forum.post'].search([('id', '=', int(post_id))])
+        question._update_unanchor_post()
         return {
             'success':True
         }
