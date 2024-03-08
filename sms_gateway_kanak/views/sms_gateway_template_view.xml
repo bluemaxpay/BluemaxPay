@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="sms_gateway_template_view_form" model="ir.ui.view">
+        <field name="name">sms.gateway.template.view.form</field>
+        <field name="model">sms.gateway.template</field>
+        <field name="arch" type="xml">
+            <form string="SMS Templates">
+                <header>
+                    <button string="Activate" name='action_template_activate' type='object' class='oe_highlight' invisible="active" />
+                    <button string="Deactivate" name='action_template_deactivate' type='object' class='oe_highlight' invisible="not active" />
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                    <div class="oe_button_box" name="button_box">
+                        <field name="sidebar_action_id" invisible="1" />
+                        <button name="action_create_sidebar_action" type="object" groups="base.group_system" class="oe_stat_button" invisible="not sidebar_action_id" icon="fa-plus" help="Add a contextual action on the related model to open a sms composer with this template">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Add</span>
+                                <span class="o_stat_text">Context Action</span>
+                            </div>
+                        </button>
+                        <button name="action_unlink_sidebar_action" type="object" groups="base.group_system" class="oe_stat_button" icon="fa-minus" invisible="not sidebar_action_id" help="Remove the contextual action of the related model" widget="statinfo">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Remove</span>
+                                <span class="o_stat_text">Context Action</span>
+                            </div>
+                        </button>
+                        <button string="Automated Action" name="action_open_base_automated_action" type="object" groups="base.group_system" class="oe_stat_button" icon="fa-gear" invisible="not base_automation_id" widget="statinfo" />
+                    </div>
+                    <field name="active" invisible="1" />
+                    <field name="base_automation_id" invisible="1" />
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only" string="SMS Template" />
+                        <h1>
+                            <field name="name" required="1" />
+                        </h1>
+                        <group>
+                            <field name="model_id" options="{'no_create': True}" required="active" />
+                            <field name="model" invisible="1" />
+                            <field name="model_flag" invisible="1" />
+                            <field name="flag" invisible="1" />
+                        </group>
+                    </div>
+                    <notebook>
+                        <page string="Content">
+                            <group>
+                                <field name="body" nolabel="1" colspan="2" />
+                            </group>
+                        </page>
+                        <page string="Template Keyword Generator">
+                            <group>
+                                <field name="keyword_lines" nolabel="1" colspan="2" context="{'model': model_id}">
+                                    <tree>
+                                        <field name='keyword' />
+                                        <field name='field_value' string='Field' />
+                                    </tree>
+                                    <form editable='bottom'>
+                                        <group>
+                                            <field name="model_name" invisible="1" />
+                                            <field name='field' widget="domain" options="{'model': 'model_name'}" class="sms_keword_domain_field" />
+                                            <field name='keyword' />
+                                        </group>
+                                        <div class='sms_domain_notes' />
+                                    </form>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="sms_gateway_template_view_tree" model="ir.ui.view">
+        <field name="name">sms.gateway.template.view.tree</field>
+        <field name="model">sms.gateway.template</field>
+        <field name="arch" type="xml">
+            <tree string="SMS Templates" decoration-muted="(not active)">
+                <field name="name" />
+                <field name="model_id" />
+                <field name="active" invisible="1" />
+            </tree>
+        </field>
+    </record>
+    <record id="sms_gateway_template_view_search" model="ir.ui.view">
+        <field name="name">sms.gateway.template.view.search</field>
+        <field name="model">sms.gateway.template</field>
+        <field name="arch" type="xml">
+            <search string="Search SMS Templates">
+                <field name="name" />
+                <field name="model_id" />
+                <filter string="All" name="all" domain="['|', ('active', '=', False), ('active', '=', True)]" />
+            </search>
+        </field>
+    </record>
+    <record id="sms_gateway_template_action" model="ir.actions.act_window">
+        <field name="name">Templates</field>
+        <field name="res_model">sms.gateway.template</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_all': 1}</field>
+    </record>
+    <menuitem id="sms_template_menu" name="SMS Templates" parent="sms_gateway_kanak.sms_config_menu" sequence="1" action="sms_gateway_template_action" />
+</odoo>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sms_gateway_composer_view_form" model="ir.ui.view">
+        <field name="name">sms.gateway.composer.view.form</field>
+        <field name="model">sms.gateway.composer</field>
+        <field name="arch" type="xml">
+            <form string="Send SMS">
+                <sheet>
+                    <group>
+                        <field name="res_id" invisible="1" />
+                        <field name="res_ids" invisible="1" />
+                        <field name="res_model" invisible="1" />
+                        <field name="number_field_name" invisible="1" />
+                        <field name="partner_ids" invisible="1" />
+                        <field name="body" />
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Send SMS" type="object" class="oe_highlight" name="action_send_sms" />
+                    <button string="Close" class="btn btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="sms_gateway_composer_action_form" model="ir.actions.act_window">
+        <field name="name">Send SMS Text Message</field>
+        <field name="res_model">sms.gateway.composer</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
