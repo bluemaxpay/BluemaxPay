@@ -14,6 +14,8 @@
     'data': [
         'data/cron_data.xml',
         'data/smseagle_data.xml',
+        'views/discuss_channel_views.xml',
+        'views/res_partner_views.xml',
         'views/sms_gateway_smseagle_views.xml',
     ],
     'license': 'OPL-1',

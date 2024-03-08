@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">res.partner.form.smseagle</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr='//field[@name="user_ids"]' position='before'>
+                <field name="incm_mobile_subs" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

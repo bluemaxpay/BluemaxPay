@@ -63,6 +63,10 @@ class SMSGateway(models.Model):
         if response.status_code != 200:
             res.update({'error_message': res})
         res = res[0]
+
+        if res.get('status').upper() == 'REJECTED':
+            res['status'] = 'failed'
+
         res.update({
             'sms_gateway': self.id,
             'partner_id': partner_id or False,

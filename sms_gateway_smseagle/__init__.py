@@ -2,4 +2,5 @@
 # Powered by Kanak Infosystems LLP.
 # © 2020 Kanak Infosystems LLP. (<https://www.kanakinfosystems.com>).
 
+from . import controllers
 from . import models
