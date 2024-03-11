@@ -24,9 +24,6 @@
                         password="True"
                         required="gateway == 'smseagle' and state != 'disabled'" />
                     <field
-                        name="smseagle_modem_no"
-                        required="gateway == 'smseagle' and state != 'disabled'" />
-                    <field
                         name="smseagle_test_mobile"
                         string="Test Mobile"
                         required="gateway == 'smseagle' and state != 'disabled'" />
