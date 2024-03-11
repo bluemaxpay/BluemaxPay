@@ -16,6 +16,7 @@ class SMSGateway(models.Model):
 
     gateway = fields.Selection(selection_add=[('smseagle', 'SMSEagle')], ondelete={'smseagle': 'set default'})
     smseagle_access_token = fields.Char(string='Access Token', required_if_gateway='smseagle', groups='base.group_user')
+    smseagle_modem_no = fields.Integer(string='Modem Number', required_if_gateway='smseagle', groups='base.group_user')
     smseagle_test_mobile = fields.Char(required_if_gateway='smseagle', groups='base.group_user')
 
     def _get_smseagle_urls(self):
@@ -30,7 +31,8 @@ class SMSGateway(models.Model):
         }
         payload = {
             "to": [self.smseagle_test_mobile],
-            "text": "Test SMS from Odoo"
+            "text": "Test SMS from Odoo",
+            "modem_no": self.smseagle_modem_no
         }
         response = requests.post(url + "/index.php/api/v2/messages/sms", data=json.dumps(payload), headers=headers)
         res = response.json()
@@ -56,7 +58,8 @@ class SMSGateway(models.Model):
         }
         payload = {
             "to": [mobile],
-            "text": message
+            "text": message,
+            "modem_no": self.smseagle_modem_no
         }
         response = requests.post(url + "/index.php/api/v2/messages/sms", data=json.dumps(payload), headers=headers)
         res = response.json()
